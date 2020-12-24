@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="ag04.hackathon2020.moneyheist.mapper.MemberMapper">
+	
+	<resultMap type="MemberSkill" id="memberSkillResult">
+		<result property="level" column="level" />
+        <association property="skill" javaType="Skill">
+	        <result property="id" column="skilLId"/>
+	        <result property="name" column="skillName"/>
+        </association>
+	</resultMap>
+    
+	<resultMap type="Member" id="memberMap">
+		<id property="id" column="id" />
+		<result property="sex" column="sex" />
+		<result property="email" column="email" />
+		<result property="name" column="name" />
+		<result property="status" column="statusValue" />
+        <association property="mainSkill" javaType="Skill">
+	        <result property="id" column="skilLId"/>
+	        <result property="name" column="skillName"/>
+        </association>
+  		<collection property="memberSkills" column="id" ofType="MemberSkill" select="findMemberSkillsByMemberId"/>
+	</resultMap>
+
+	<select id="findMemberByEmail" resultType="Member" resultMap="memberMap">
+		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		FROM member m
+		INNER JOIN skill sk ON m.id_main_skill = sk.id
+		WHERE email = #{email}
+	</select>
+	
+	<select id="findMemberSkillsByMemberId" resultType="MemberSkill" resultMap="memberSkillResult">
+		SELECT ms.level AS level, s.id AS skillId, s.name AS skillName
+		FROM member_skills ms
+		INNER JOIN skill s ON ms.id_skill = s.id
+		WHERE ms.id_member = #{id}
+	</select>
+	
+	<insert id="insertMember" parameterType="Member">
+		<selectKey order="AFTER" keyProperty="id" resultType="long">
+	    	SELECT id FROM member WHERE email = #{email}
+	  	</selectKey>
+		INSERT INTO member (sex, name, email, status, id_main_skill)
+		VALUES (#{sex}, #{name}, #{email}, #{status}, #{mainSkill.id});
+		<foreach collection="memberSkills" item="ms" index="index">
+			INSERT INTO member_skills (id_member, id_skill, level)
+			VALUES (SELECT id FROM member WHERE email = #{email}, #{ms.skill.id}, #{ms.level});
+       </foreach>
+	</insert>
+	
+	<update id="updateMember" parameterType="Member">
+		UPDATE member
+		SET sex = #{sex}, name = #{name}, email = #{email}, status = #{status}, id_main_skill = #{mainSkill.id}
+		WHERE id = #{id};
+		<foreach collection="memberSkills" item="ms" index="index">
+			INSERT INTO member_skills (id_member, id_skill, level)
+			VALUES (#{id}, #{ms.skill.id}, #{ms.level});
+       </foreach>
+	</update>
+	
+</mapper>

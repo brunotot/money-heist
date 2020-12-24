@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<configuration>
+	<typeAliases>
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Member" alias="Member" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Status" alias="Status" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Skill" alias="Skill" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.MemberSkill" alias="MemberSkill" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Sex" alias="Sex" />
+	</typeAliases>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="org.h2.Driver" />
+				<property name="url" value="jdbc:h2:mem:heist" />
+				<property name="username" value="root" />
+				<property name="password" value="pass" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="ag04/hackathon2020/moneyheist/mapper/MemberMapper.xml" />
+		<mapper resource="ag04/hackathon2020/moneyheist/mapper/SkillMapper.xml" />
+	</mappers>
+</configuration>

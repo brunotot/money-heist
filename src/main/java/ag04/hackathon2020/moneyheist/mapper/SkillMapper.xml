@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="ag04.hackathon2020.moneyheist.mapper.SkillMapper">
+	
+    <resultMap type="Skill" id="skillMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+	
+	<select id="findSkillByName" resultType="Skill" resultMap="skillMap">
+		SELECT *
+		FROM skill
+		WHERE name = #{name}
+	</select>
+	
+	<insert id="insertSkill" parameterType="Skill">
+		<selectKey order="AFTER" keyProperty="id" resultType="long">
+	    	SELECT id FROM skill WHERE name = #{name}
+	  	</selectKey>
+		INSERT INTO skill (name)
+		VALUES #{name}
+	</insert>
+	
+	<update id="updateSkill" parameterType="Skill">
+		UPDATE member
+		SET name = #{name}
+		WHERE id = #{id};
+	</update>
+	
+</mapper>
