@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.10.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+	<changeSet author="bruno.tot" id="1">
+		<insert tableName="member">
+			<column name="id" value="1"/>
+			<column name="sex" value="M"/>
+			<column name="name" value="Helsinki"/>
+			<column name="email" value="helsinki@ag04.com"/>
+			<column name="id_main_skill" value="1"/>
+			<column name="status" value="AVAILABLE"/>
+		</insert>
+	</changeSet>
+	
+</databaseChangeLog>

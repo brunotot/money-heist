@@ -1,0 +1,34 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.10.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+    
+	<changeSet author="bruno.tot" id="1">
+        <createTable tableName="member_skills">
+            <column name="id_member" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_skill" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="*" name="level" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet author="bruno.tot" id="2">
+        <createIndex indexName="fk_member_skills_member1_idx" tableName="member_skills">
+            <column name="id_member"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno.tot" id="3">
+        <createIndex indexName="fk_member_skills_skill1_idx" tableName="member_skills">
+            <column name="id_skill"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet author="bruno.tot" id="4">
+        <addForeignKeyConstraint baseColumnNames="id_member" baseTableName="member_skills" constraintName="fk_member_skills_member1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="member" validate="true"/>
+    </changeSet>
+    <changeSet author="bruno.tot" id="5">
+        <addForeignKeyConstraint baseColumnNames="id_skill" baseTableName="member_skills" constraintName="fk_member_skills_skill1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="skill" validate="true"/>
+    </changeSet>
+    
+</databaseChangeLog>
