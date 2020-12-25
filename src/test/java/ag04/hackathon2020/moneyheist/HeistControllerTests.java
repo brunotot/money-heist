@@ -1,5 +1,6 @@
 package ag04.hackathon2020.moneyheist;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ag04.hackathon2020.moneyheist.dto.HeistDto;
+import ag04.hackathon2020.moneyheist.dto.HeistSkillArrayDto;
 import ag04.hackathon2020.moneyheist.dto.HeistSkillDto;
 
 @RunWith(SpringRunner.class)
@@ -134,6 +136,80 @@ public class HeistControllerTests {
 				.andExpect(status().isBadRequest()).andReturn();		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Invalid dates";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+
+	@Test
+	public void updateHeist_updateHeistWithValidData_shouldReturnNoContentStatusWithContentLocationHeader() throws Exception {
+		
+		Long heistId = 1L;
+		
+		String path = "/heist/" + heistId + "/skills";
+		// HeistSkillArrayDto
+		/**********************************************/
+		List<HeistSkillDto> heistSkillDtos = List.of(
+			new HeistSkillDto("driving", "****", 1),
+			new HeistSkillDto("driving", "**", 3)
+		);
+		/**********************************************/
+		
+		HeistSkillArrayDto hsad = new HeistSkillArrayDto(heistSkillDtos);
+		String memberDtoString = mapper.writeValueAsString(hsad);
+		MvcResult mvcResult = this.mvc.perform(
+				patch(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isNoContent()).andReturn();		
+		String locationExpected = "/heist/1/skills";
+		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Content-Location");
+		Assert.assertEquals(locationExpected, locationActual);
+
+	}
+	
+	@Test
+	public void updateHeist_updateNonExistingHeist_shouldReturnNotFound() throws Exception {
+		
+		Long heistId = 99L;
+		
+		String path = "/heist/" + heistId + "/skills";
+		// HeistSkillArrayDto
+		/**********************************************/
+		List<HeistSkillDto> heistSkillDtos = List.of(
+			new HeistSkillDto("driving", "****", 1),
+			new HeistSkillDto("driving", "**", 3)
+		);
+		/**********************************************/
+		
+		HeistSkillArrayDto hsad = new HeistSkillArrayDto(heistSkillDtos);
+		String memberDtoString = mapper.writeValueAsString(hsad);
+		MvcResult mvcResult = this.mvc.perform(
+				patch(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isNotFound()).andReturn();		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Heist not found";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+
+	}
+
+	@Test
+	public void updateHeist_updateHeistWithDuplicateSkills_shouldReturnBadRequest() throws Exception {
+
+		Long heistId = 1L;
+		
+		String path = "/heist/" + heistId + "/skills";
+		// HeistSkillArrayDto
+		/**********************************************/
+		List<HeistSkillDto> heistSkillDtos = List.of(
+			new HeistSkillDto("driving", "****", 1),
+			new HeistSkillDto("driving", "****", 3)
+		);
+		/**********************************************/
+		
+		HeistSkillArrayDto hsad = new HeistSkillArrayDto(heistSkillDtos);
+		String memberDtoString = mapper.writeValueAsString(hsad);
+		MvcResult mvcResult = this.mvc.perform(
+				patch(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isBadRequest()).andReturn();		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Duplicate heist skills";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
 	
