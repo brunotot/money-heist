@@ -1,5 +1,7 @@
 package ag04.hackathon2020.moneyheist.entity;
 
+import java.util.List;
+
 public class Skill {
 
 	private Long id;
@@ -30,6 +32,13 @@ public class Skill {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public static Skill find(String name, List<Skill> skills) {
+		return skills.stream()
+			.filter(s -> s != null && s.getName().toUpperCase().equals(name.toUpperCase()))
+			.findAny()
+			.orElse(null);
 	}
 	
 }
