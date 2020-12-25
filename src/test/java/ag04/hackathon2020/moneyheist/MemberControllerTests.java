@@ -1,5 +1,6 @@
 package ag04.hackathon2020.moneyheist;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -215,6 +216,7 @@ public class MemberControllerTests {
 		Assert.assertTrue(response.contains(problemTitleExpected));
 		
 	}
+	
 	@Test
 	public void updateMember_updateMemberDuplicateSkillNames_shouldReturnBadRequest() throws Exception {
 		
@@ -238,5 +240,57 @@ public class MemberControllerTests {
 		String problemTitleExpected = "Duplicate member skill names";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
+
+	@Test
+	public void deleteMemberSkill_deleteExistingSkillForExistingMember_shouldReturnNoContent() throws Exception {
+		
+		// skillNameToDelete
+		/**********************************************/
+		String skillNameToDelete = "combat";
+		/**********************************************/
+		
+		String locationExpected = "/member/1/skills/" + skillNameToDelete;
+		this.mvc.perform(
+				delete(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isNoContent()).andReturn();
+	}
+	
+	@Test
+	public void deleteMemberSkill_deleteExistingSkillForNonExistingMember_shouldReturnNotFound() throws Exception {
+		
+		// skillNameToDelete
+		/**********************************************/
+		String skillNameToDelete = "combat";
+		Long nonExistingMemberId = 99L;
+		/**********************************************/
+		
+		String locationExpected = "/member/" + nonExistingMemberId + "/skills/" + skillNameToDelete;
+		MvcResult mvcResult = this.mvc.perform(
+				delete(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isNotFound()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Member not found";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+
+	}
+	
+	@Test
+	public void deleteMemberSkill_deleteNonExistingSkillOfExistingMember_shouldReturnNotFound() throws Exception {
+		
+		// skillNameToDelete
+		/**********************************************/
+		String skillNameToDelete = "invalid";
+		Long nonExistingMemberId = 1L;
+		/**********************************************/
+		
+		String locationExpected = "/member/" + nonExistingMemberId + "/skills/" + skillNameToDelete;
+		MvcResult mvcResult = this.mvc.perform(
+				delete(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isNotFound()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Member doesn't have the skill";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
 	
 }
