@@ -80,4 +80,21 @@
 		</foreach>
 	</update>
 	
+	<select id="findEligibleMembers" resultType="Member" parameterType="Heist" resultMap="memberMap">
+		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		FROM member m
+		LEFT JOIN skill sk ON m.id_main_skill = sk.id
+		WHERE m.status IN ('AVAILABLE', 'RETIRED')
+		AND m.id IN (
+			SELECT ms.id_member
+			FROM member_skills ms
+			WHERE ms.id_skill IN (
+				SELECT id_skill
+				FROM heist_skills
+				WHERE id_heist = #{id}
+				AND ms.level >= level
+			) 
+		)
+	</select>
+	
 </mapper>

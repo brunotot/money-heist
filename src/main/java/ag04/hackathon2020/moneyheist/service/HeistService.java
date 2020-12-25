@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ag04.hackathon2020.moneyheist.entity.Heist;
+import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.entity.Skill;
 import ag04.hackathon2020.moneyheist.exception.ApiException;
 import ag04.hackathon2020.moneyheist.mapper.HeistMapper;
+import ag04.hackathon2020.moneyheist.mapper.MemberMapper;
 import ag04.hackathon2020.moneyheist.mapper.SkillMapper;
 import ag04.hackathon2020.moneyheist.validation.HeistValidator;
 
@@ -20,12 +22,15 @@ public class HeistService {
 	
 	private SkillMapper skillMapper;
 	
+	private MemberMapper memberMapper;
+	
 	private HeistValidator heistValidator;
 	
-	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator) {
+	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator, MemberMapper memberMapper) {
 		this.heistValidator = heistValidator;
 		this.heistMapper = heistMapper;
 		this.skillMapper = skillMapper;
+		this.memberMapper = memberMapper;
 	}
 	
 	@Transactional
@@ -66,6 +71,10 @@ public class HeistService {
 	public Heist update(Heist heist) {
 		heistValidator.validateDuplicateSkills(heist);
 		return saveHeistAndSkills(heist);
+	}
+
+	public List<Member> findEligibleMembers(Heist heist) {
+		return memberMapper.findEligibleMembers(heist);
 	}
 
 }
