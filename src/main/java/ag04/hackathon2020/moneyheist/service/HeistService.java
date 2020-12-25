@@ -79,6 +79,9 @@ public class HeistService {
 	}
 
 	public void confirmHeistMembers(Heist heist, List<Member> members) {
+		if (members.isEmpty()) {
+			throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid members array", "Empty arrays are not allowed", null);
+		}
 		heistValidator.validateHeistStatus(heist);
 		List<Member> eligibleMembers = findEligibleMembers(heist);
 		heistValidator.validateEligibleMembersForConfirmation(heist, members, eligibleMembers);
