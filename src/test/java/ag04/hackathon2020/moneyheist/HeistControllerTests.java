@@ -62,7 +62,7 @@ public class HeistControllerTests {
 		MvcResult mvcResult = this.mvc.perform(
 				post("/heist").contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
 				.andExpect(status().isCreated()).andReturn();		
-		String locationExpected = "/heist/3";
+		String locationExpected = "/heist/4";
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
 		Assert.assertEquals(locationExpected, locationActual);
 	}
@@ -318,6 +318,66 @@ public class HeistControllerTests {
 		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist status is not PLANNING";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void startHeist_startValidHeist_shouldReturnOkStatusWithLocationHeader() throws Exception {
+
+		Long heistId = 3L;
+		List<String> members = List.of(
+				"Helsinki"
+		);
+		String path = "/heist/" + heistId + "/start";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isOk()).andReturn();		
+		
+		String locationExpected = "/heist/" + heistId + "/status";
+		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
+		Assert.assertEquals(locationExpected, locationActual);
+	}
+	
+	@Test
+	public void startHeist_startNonExistingHeist_shouldReturnNotFound() throws Exception {
+
+		Long heistId = 99L;
+		List<String> members = List.of(
+				"Helsinki"
+		);
+		String path = "/heist/" + heistId + "/start";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isNotFound()).andReturn();		
+		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Heist not found";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void startHeist_startHeistWhichDoesntHaveReadyStatus_shouldReturnMethodNotAllowed() throws Exception {
+
+		Long heistId = 1L;
+		List<String> members = List.of(
+				"Helsinki"
+		);
+		String path = "/heist/" + heistId + "/start";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isMethodNotAllowed()).andReturn();		
+		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Heist status is not READY";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
 	
