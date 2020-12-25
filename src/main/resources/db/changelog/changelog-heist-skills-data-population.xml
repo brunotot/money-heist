@@ -11,7 +11,7 @@
 		<insert tableName="heist_skills">
 			<column name="id_heist" value="1"/>
 			<column name="id_skill" value="2"/>
-			<column name="level" value="******"/>
+			<column name="level" value="*****"/>
 			<column name="members" value="3"/>
 		</insert>
 	</changeSet>

@@ -8,6 +8,7 @@
 			<column name="location" value="Spain"/>
 			<column name="start_time" value="2020-12-27T22:00:00.000Z"/>
 			<column name="end_time" value="2020-12-28T18:00:00.000Z"/>
+			<column name="status" value="PLANNING"/>
 		</insert>
 	</changeSet>
 	

@@ -5,12 +5,12 @@
 		<insert tableName="member_skills">
 			<column name="id_member" value="1"/>
 			<column name="id_skill" value="1"/>
-			<column name="level" value="****"/>
+			<column name="level" value="***"/>
 		</insert>
 		<insert tableName="member_skills">
 			<column name="id_member" value="1"/>
 			<column name="id_skill" value="2"/>
-			<column name="level" value="******"/>
+			<column name="level" value="***"/>
 		</insert>
 	</changeSet>
 	

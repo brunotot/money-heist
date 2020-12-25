@@ -18,6 +18,9 @@
             <column name="end_time" type="datetime">
                 <constraints nullable="false"/>
             </column>
+            <column name="status" type="VARCHAR(255)" defaultValue="PLANNING">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     
