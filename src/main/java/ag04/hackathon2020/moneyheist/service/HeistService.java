@@ -86,7 +86,7 @@ public class HeistService {
 		List<Member> eligibleMembers = findEligibleMembers(heist);
 		heistValidator.validateEligibleMembersForConfirmation(heist, members, eligibleMembers);
 		heist.setHeistStatus(HeistStatus.READY);
-		saveHeistAndSkills(heist);
+		heistMapper.save(heist);
 	}
 
 }

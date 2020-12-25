@@ -3,11 +3,14 @@ package ag04.hackathon2020.moneyheist;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ag04.hackathon2020.moneyheist.dto.HeistDto;
 import ag04.hackathon2020.moneyheist.dto.HeistSkillArrayDto;
 import ag04.hackathon2020.moneyheist.dto.HeistSkillDto;
+import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -50,14 +54,15 @@ public class HeistControllerTests {
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "**", 3)
 		);
+		HeistStatus heistStatus = HeistStatus.PLANNING;
 		/**********************************************/
 		
-		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos);
+		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
 		String memberDtoString = mapper.writeValueAsString(heistDto);
 		MvcResult mvcResult = this.mvc.perform(
 				post("/heist").contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
 				.andExpect(status().isCreated()).andReturn();		
-		String locationExpected = "/heist/2";
+		String locationExpected = "/heist/3";
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
 		Assert.assertEquals(locationExpected, locationActual);
 	}
@@ -76,9 +81,10 @@ public class HeistControllerTests {
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "**", 3)
 		);
+		HeistStatus heistStatus = HeistStatus.PLANNING;
 		/**********************************************/
 		
-		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos);
+		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
 		String memberDtoString = mapper.writeValueAsString(heistDto);
 		MvcResult mvcResult = this.mvc.perform(
 				post("/heist").contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
@@ -102,9 +108,10 @@ public class HeistControllerTests {
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "*****", 3)
 		);
+		HeistStatus heistStatus = HeistStatus.PLANNING;
 		/**********************************************/
 		
-		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos);
+		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
 		String memberDtoString = mapper.writeValueAsString(heistDto);
 		MvcResult mvcResult = this.mvc.perform(
 				post("/heist").contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
@@ -128,9 +135,10 @@ public class HeistControllerTests {
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "*****", 3)
 		);
+		HeistStatus heistStatus = HeistStatus.PLANNING;
 		/**********************************************/
 		
-		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos);
+		HeistDto heistDto = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
 		String memberDtoString = mapper.writeValueAsString(heistDto);
 		MvcResult mvcResult = this.mvc.perform(
 				post("/heist").contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
@@ -225,6 +233,91 @@ public class HeistControllerTests {
 				.andExpect(status().isNotFound()).andReturn();		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist not found";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void confirmHeistMembers_confirmValidHeistMembers_shouldReturnNoContent() throws Exception {
+
+		Long heistId = 2L;
+		List<String> members = List.of(
+				"Helsinki"
+		);
+		String path = "/heist/" + heistId + "/members";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isNoContent()).andReturn();		
+		
+		String locationExpected = path;
+		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Content-Location");
+		Assert.assertEquals(locationExpected, locationActual);
+	}
+	
+	@Test
+	public void confirmHeistMembers_confirmNonExistingHeist_shouldReturnNotFound() throws Exception {
+
+		Long heistId = 99L;
+		List<String> members = List.of(
+				"Helsinki"
+		);
+		String path = "/heist/" + heistId + "/members";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isNotFound()).andReturn();		
+		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Heist not found";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void confirmHeistMembers_confirmInvalidMembers_shouldReturnNotFound() throws Exception {
+
+		Long heistId = 2L;
+		List<String> members = List.of(
+				"Bruno"
+		);
+		String path = "/heist/" + heistId + "/members";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isNotFound()).andReturn();		
+		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Member not found";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void confirmHeistMembers_confirmMembersForHeistNotInPlanningStatus_shouldReturnMethodNotAllowed() throws Exception {
+
+		Long heistId = 1L;
+		List<String> members = List.of(
+				"Helsinki"
+		);
+		String path = "/heist/" + heistId + "/members";		
+		Map<String, Object> json = new LinkedHashMap<>();
+		json.put("members", members);
+		String dto = mapper.writeValueAsString(json);
+
+		// Make heist with ID: 1 READY
+		this.mvc.perform(put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto));
+		
+		MvcResult mvcResult = this.mvc.perform(
+				put(path).contentType(MediaType.APPLICATION_JSON_VALUE).content(dto))
+				.andExpect(status().isMethodNotAllowed()).andReturn();		
+		
+		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Heist status is not PLANNING";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
 	

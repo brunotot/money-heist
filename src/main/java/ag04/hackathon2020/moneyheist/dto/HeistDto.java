@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ag04.hackathon2020.moneyheist.entity.Heist;
+import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 
 public class HeistDto {
 
@@ -18,17 +19,20 @@ public class HeistDto {
 	
 	private Date endTime;
 	
+	private HeistStatus heistStatus;
+	
 	public HeistDto() {
 		super();
 	}
 
-	public HeistDto(String name, String location, Date startTime, Date endTime, List<HeistSkillDto> heistSkillDtos) {
+	public HeistDto(String name, String location, Date startTime, Date endTime, List<HeistSkillDto> heistSkillDtos, HeistStatus heistStatus) {
 		super();
 		this.name = name;
 		this.location = location;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.heistSkillDtos = heistSkillDtos;
+		this.heistStatus = heistStatus;
 	}
 
 	@JsonProperty("skills")
@@ -53,6 +57,10 @@ public class HeistDto {
 	public List<HeistSkillDto> getHeistSkillDtos() {
 		return heistSkillDtos;
 	}
+	
+	public HeistStatus getHeistStatus() {
+		return this.heistStatus;
+	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -72,6 +80,10 @@ public class HeistDto {
 
 	public void setHeistSkillDtos(List<HeistSkillDto> heistSkillDtos) {
 		this.heistSkillDtos = heistSkillDtos;
+	}
+	
+	public void setHeistStatus(HeistStatus heistStatus) {
+		this.heistStatus = heistStatus;
 	}
 
 	public static Heist toEntity(HeistDto dto) {
