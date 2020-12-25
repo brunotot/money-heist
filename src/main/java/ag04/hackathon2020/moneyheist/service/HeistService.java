@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ag04.hackathon2020.moneyheist.entity.Heist;
+import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.entity.Skill;
 import ag04.hackathon2020.moneyheist.exception.ApiException;
@@ -75,6 +76,14 @@ public class HeistService {
 
 	public List<Member> findEligibleMembers(Heist heist) {
 		return memberMapper.findEligibleMembers(heist);
+	}
+
+	public void confirmHeistMembers(Heist heist, List<Member> members) {
+		heistValidator.validateHeistStatus(heist);
+		List<Member> eligibleMembers = findEligibleMembers(heist);
+		heistValidator.validateEligibleMembersForConfirmation(heist, members, eligibleMembers);
+		heist.setHeistStatus(HeistStatus.READY);
+		saveHeistAndSkills(heist);
 	}
 
 }

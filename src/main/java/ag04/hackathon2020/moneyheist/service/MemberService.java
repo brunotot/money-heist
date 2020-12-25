@@ -54,6 +54,20 @@ public class MemberService {
 		}
 		return member;
 	}
+
+	public List<Member> findByNames(List<String> names) {
+		return names.stream()
+				.map(name -> findByName(name))
+				.collect(Collectors.toList());
+	}
+	
+	public Member findByName(String name) {
+		Member member = memberMapper.findByName(name);
+		if (member == null) {
+			throw new ApiException(HttpStatus.NOT_FOUND, "Member not found", "Member with name: " + name + " not found", null);
+		}
+		return member;
+	}
 	
 	@Transactional
 	private Member saveMemberAndSkills(Member member) {

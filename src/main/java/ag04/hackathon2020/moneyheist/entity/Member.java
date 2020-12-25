@@ -20,14 +20,14 @@ public class Member {
 	
 	private Skill mainSkill;
 	
-	private Status status;
+	private MemberStatus status;
 
 	public Member() {
 		super();
 	}
 
 	public Member(Long id, String email, String name, Sex sex, List<MemberSkill> memberSkills, Skill mainSkill,
-			Status status) {
+			MemberStatus status) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -62,7 +62,7 @@ public class Member {
 		return mainSkill;
 	}
 
-	public Status getStatus() {
+	public MemberStatus getStatus() {
 		return status;
 	}
 	
@@ -118,7 +118,7 @@ public class Member {
 		this.mainSkill = mainSkill;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(MemberStatus status) {
 		this.status = status;
 	}
 

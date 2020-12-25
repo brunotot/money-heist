@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import ag04.hackathon2020.moneyheist.entity.Heist;
 import ag04.hackathon2020.moneyheist.entity.HeistSkill;
+import ag04.hackathon2020.moneyheist.entity.HeistStatus;
+import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.exception.ApiException;
 import ag04.hackathon2020.moneyheist.mapper.HeistMapper;
 
@@ -64,6 +66,19 @@ public class HeistValidator {
 			}
 		}
 	}
+
+	public void validateEligibleMembersForConfirmation(Heist heist, List<Member> membersForConfirmation, List<Member> eligibleMembers) {
+		for (Member confirmationMember : membersForConfirmation) {
+			if (eligibleMembers.stream().noneMatch(em -> em.getName().equals(confirmationMember.getName()))) {
+				throw new ApiException(HttpStatus.BAD_REQUEST, "Member not eligible", "At least one given member is not eligible for heist confirmation", null);
+			}
+		}
+	}
 	
+	public void validateHeistStatus(Heist heist) {
+		if (!heist.getHeistStatus().equals(HeistStatus.PLANNING)) {
+			throw new ApiException(HttpStatus.METHOD_NOT_ALLOWED, "Heist status is not PLANNING", "Heist with id: " + heist.getId() + " status is: " + heist.getHeistStatus(), null);
+		}
+	}
 	
 }

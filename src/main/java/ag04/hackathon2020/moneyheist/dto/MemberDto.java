@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.entity.Sex;
 import ag04.hackathon2020.moneyheist.entity.Skill;
-import ag04.hackathon2020.moneyheist.entity.Status;
+import ag04.hackathon2020.moneyheist.entity.MemberStatus;
 
 public class MemberDto {
 
@@ -105,7 +105,7 @@ public class MemberDto {
 		entity.setId(dto.getId());
 		entity.setName(dto.getName());
 		entity.setSex(dto.getSex());
-		entity.setStatus(dto.getStatus() == null ? null : Status.valueOf(dto.getStatus().toUpperCase()));
+		entity.setStatus(dto.getStatus() == null ? null : MemberStatus.valueOf(dto.getStatus().toUpperCase()));
 		entity.setMainSkill(dto.getMainSkill() == null ? null : new Skill(null, dto.getMainSkill().toUpperCase()));
 		entity.setMemberSkills(dto.getMemberSkillDtos() == null ? null : dto.getMemberSkillDtos().stream().map(msd -> MemberSkillDto.toEntity(msd)).collect(Collectors.toList()));
 		return entity;

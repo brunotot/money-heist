@@ -26,6 +26,14 @@ public class MemberMapper {
 		session.close();
 		return member;
 	}
+
+	public Member findByName(String name) {
+		SqlSession session = sqlSessionFactory.openSession();
+		Member member = session.selectOne("findMemberByName", name);
+		session.commit();
+		session.close();
+		return member;
+	}
 	
 	public Member findByEmail(String email) {
 		SqlSession session = sqlSessionFactory.openSession();

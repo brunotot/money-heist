@@ -1,6 +1,6 @@
 package ag04.hackathon2020.moneyheist.entity;
 
-public enum Status {
+public enum MemberStatus {
 
 	 AVAILABLE,
 	 EXPIRED,

@@ -39,6 +39,13 @@
 		LEFT JOIN skill sk ON m.id_main_skill = sk.id
 		WHERE email = #{email}
 	</select>
+
+	<select id="findMemberByName" resultType="Member" resultMap="memberMap">
+		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		FROM member m
+		LEFT JOIN skill sk ON m.id_main_skill = sk.id
+		WHERE m.name = #{name}
+	</select>
 	
 	<select id="findMemberSkillsByMemberId" resultType="MemberSkill" resultMap="memberSkillResult">
 		SELECT ms.level AS level, s.id AS skillId, s.name AS skillName
@@ -67,7 +74,8 @@
 			DELETE FROM member_skills
 			WHERE id_skill = #{ms.skill.id}
 			AND id_member = #{id};
-			
+		</foreach>
+		<foreach collection="memberSkills" item="ms" index="index">
 			INSERT INTO member_skills (id_member, id_skill, level)
 			VALUES (#{id}, #{ms.skill.id}, #{ms.level});
 		</foreach>

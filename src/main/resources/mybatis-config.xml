@@ -6,7 +6,8 @@
 <configuration>
 	<typeAliases>
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Member" alias="Member" />
-		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Status" alias="Status" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.MemberStatus" alias="MemberStatus" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.HeistStatus" alias="HeistStatus" />
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Skill" alias="Skill" />
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.MemberSkill" alias="MemberSkill" />
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Sex" alias="Sex" />

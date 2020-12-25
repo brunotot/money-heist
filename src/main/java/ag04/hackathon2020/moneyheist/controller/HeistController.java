@@ -2,6 +2,7 @@ package ag04.hackathon2020.moneyheist.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -18,15 +20,19 @@ import ag04.hackathon2020.moneyheist.dto.HeistSkillArrayDto;
 import ag04.hackathon2020.moneyheist.entity.Heist;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.service.HeistService;
+import ag04.hackathon2020.moneyheist.service.MemberService;
 
 @Controller
 @RequestMapping("/heist")
 public class HeistController {
 
 	private HeistService heistService;
+
+	private MemberService memberService;
 	
-	public HeistController(HeistService heistService) {
+	public HeistController(HeistService heistService, MemberService memberService) {
 		this.heistService = heistService;
+		this.memberService = memberService;
 	}
 
 	@PostMapping
@@ -53,6 +59,17 @@ public class HeistController {
 		List<Member> eligibleMembers = heistService.findEligibleMembers(heist);
 		EligibleMembersDto dto = EligibleMembersDto.toDto(heist, eligibleMembers);
 		return ResponseEntity.ok(dto);
+	}
+	
+	@PutMapping("/{heistId}/members")
+	public ResponseEntity<Void> confirmHeistMembers(@PathVariable Long heistId, @RequestBody Map<String, Object> json) {
+		Heist heist = heistService.findById(heistId);
+		@SuppressWarnings("unchecked")
+		List<String> memberNames = (List<String>) json.get("members");
+		List<Member> members = memberService.findByNames(memberNames);
+		heistService.confirmHeistMembers(heist, members);
+		String contentLocation = "/heist/" + heistId + "/members";
+		return ResponseEntity.noContent().header("Content-Location", contentLocation).build();
 	}
 	
 }
