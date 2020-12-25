@@ -72,4 +72,13 @@ public class HeistController {
 		return ResponseEntity.noContent().header("Content-Location", contentLocation).build();
 	}
 	
+	@PutMapping("/{heistId}/start")
+	public ResponseEntity<Void> startHeist(@PathVariable Long heistId) {
+		Heist heist = heistService.findById(heistId);
+		heistService.startHeist(heist);
+		String heistPath = "/heist/" + heistId + "/start";
+		URI locationURI = URI.create(heistPath);
+		return ResponseEntity.ok().location(locationURI).build();
+	}
+	
 }

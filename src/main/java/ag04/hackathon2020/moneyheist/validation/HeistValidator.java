@@ -80,5 +80,11 @@ public class HeistValidator {
 			throw new ApiException(HttpStatus.METHOD_NOT_ALLOWED, "Heist status is not PLANNING", "Heist with id: " + heist.getId() + " status is: " + heist.getHeistStatus(), null);
 		}
 	}
+
+	public void validateHeistReadyStatus(Heist heist) {
+		if (!heist.getHeistStatus().equals(HeistStatus.READY)) {
+			throw new ApiException(HttpStatus.METHOD_NOT_ALLOWED, "Heist status is not READY", "Heist with id: " + heist.getId() + " status is: " + heist.getHeistStatus(), null);
+		}
+	}
 	
 }

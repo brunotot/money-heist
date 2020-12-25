@@ -89,4 +89,10 @@ public class HeistService {
 		heistMapper.save(heist);
 	}
 
+	public void startHeist(Heist heist) {
+		heistValidator.validateHeistReadyStatus(heist);
+		heist.setHeistStatus(HeistStatus.IN_PROGRESS);
+		heistMapper.save(heist);
+	}
+
 }
