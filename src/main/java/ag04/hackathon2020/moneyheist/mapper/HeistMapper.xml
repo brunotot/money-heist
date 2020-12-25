@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="ag04.hackathon2020.moneyheist.mapper.HeistMapper">
+	
+	<resultMap type="HeistSkill" id="heistSkillResult">
+		<result property="level" column="level" />
+		<result property="members" column="members" />
+        <association property="skill" javaType="Skill">
+	        <result property="id" column="skilLId"/>
+	        <result property="name" column="skillName"/>
+        </association>
+	</resultMap>
+	
+	<resultMap type="Heist" id="heistMap">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="location" column="location" />
+        <result property="startTime" column="startTime" javaType="java.util.Date" />
+        <result property="endTime" column="endTime" javaType="java.util.Date" />
+  		<collection property="heistSkills" column="id" ofType="HeistSkill" select="findHeistSkillsByHeistId"/>
+	</resultMap>
+	
+	<select id="findHeistById" resultType="Heist" resultMap="heistMap">
+		SELECT h.*
+		FROM heist h
+		WHERE h.id = #{id};
+	</select>
+	
+	
+	<select id="findHeistByName" resultType="Heist" resultMap="heistMap">
+		SELECT h.*
+		FROM heist h
+		WHERE h.name = #{name};
+	</select>
+	
+	<select id="findHeistSkillsByHeistId" resultType="HeistSkill" resultMap="heistSkillResult">
+		SELECT hs.level AS level, s.id AS skillId, s.name AS skillName, hs.members
+		FROM heist_skills hs
+		INNER JOIN skill s ON hs.id_skill = s.id
+		WHERE hs.id_heist = #{id}
+	</select>
+	
+	<insert id="insertHeist" parameterType="Heist">
+		<selectKey order="AFTER" keyProperty="id" resultType="long">
+	    	SELECT id FROM heist WHERE name = #{name}
+	  	</selectKey>
+		INSERT INTO heist (name, location, start_time, end_time)
+		VALUES (#{name}, #{location}, #{startTime}, #{endTime});
+		<foreach collection="heistSkills" item="hs" index="index">
+			INSERT INTO heist_skills (id_heist, id_skill, level, members)
+			VALUES (SELECT id FROM heist WHERE name = #{name}, #{hs.skill.id}, #{hs.level}, #{hs.members});
+       </foreach>
+	</insert>
+	
+	<update id="updateHeist" parameterType="Heist">
+		UPDATE heist
+		SET name = #{name}, location = #{location}, start_time = #{startTime}, end_time = #{endTime}
+		WHERE id = #{id};
+		<foreach collection="heistSkills" item="hs" index="index">
+			DELETE FROM heist_skills
+			WHERE id_skill = #{hs.skill.id}
+			AND id_heist = #{id};
+			
+			INSERT INTO heist_skills (id_heist, id_skill, level, members)
+			VALUES (#{id}, #{hs.skill.id}, #{hs.level}, #{hs.members});
+		</foreach>
+		
+		DELETE FROM heist_skills
+		WHERE id_heist = #{id}
+		AND id_skill NOT IN
+		<foreach collection="heistSkills" item="hs" index="index" open="(" separator=","  close=")">
+			#{hs.skill.id}
+		</foreach>
+	</update>
+	
+</mapper>

@@ -55,7 +55,6 @@ public class MemberValidator {
 		if (existingMember != null) {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "Member already exists", "Member with email '" + member.getEmail() + "' already exist. Please, make sure to provide a member with unique email", null);
 		}
-
 	}
 	
 	public void validateMainSkillReference(Member member) {
