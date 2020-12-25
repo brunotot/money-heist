@@ -1,5 +1,6 @@
 package ag04.hackathon2020.moneyheist;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -210,6 +211,20 @@ public class HeistControllerTests {
 				.andExpect(status().isBadRequest()).andReturn();		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Duplicate heist skills";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void viewEligibleMembers_findEligibleMembersOfNonExistingHeist_shouldReturnNotFound() throws Exception {
+
+		Long heistId = 99L;
+		
+		String path = "/heist/" + heistId + "/eligible_members";
+		MvcResult mvcResult = this.mvc.perform(
+				get(path).contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isNotFound()).andReturn();		
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Heist not found";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
 	
