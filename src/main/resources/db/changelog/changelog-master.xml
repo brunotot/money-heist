@@ -7,4 +7,8 @@
     <include file="db/changelog/changelog-skill-data-population.xml"/>
     <include file="db/changelog/changelog-member-data-population.xml"/>
     <include file="db/changelog/changelog-member-skills-data-population.xml"/>
+    <include file="db/changelog/changelog-heist-table-definition.xml"/>
+    <include file="db/changelog/changelog-heist-skills-table-definition.xml"/>
+    <include file="db/changelog/changelog-heist-data-population.xml"/>
+    <include file="db/changelog/changelog-heist-skills-data-population.xml"/>
 </databaseChangeLog>

@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.10.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+	<changeSet author="bruno.tot" id="1">
+		<insert tableName="heist">
+			<column name="id" value="1"/>
+			<column name="name" value="Test heist"/>
+			<column name="location" value="Spain"/>
+			<column name="start_time" value="2020-12-27T22:00:00.000Z"/>
+			<column name="end_time" value="2020-12-28T18:00:00.000Z"/>
+		</insert>
+	</changeSet>
+	
+</databaseChangeLog>
