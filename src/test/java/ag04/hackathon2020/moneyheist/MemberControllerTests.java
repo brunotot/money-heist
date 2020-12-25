@@ -1,6 +1,7 @@
 package ag04.hackathon2020.moneyheist;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ag04.hackathon2020.moneyheist.dto.MemberDto;
 import ag04.hackathon2020.moneyheist.dto.MemberSkillDto;
+import ag04.hackathon2020.moneyheist.dto.SkillArrayDto;
 import ag04.hackathon2020.moneyheist.entity.Sex;
 
 @RunWith(SpringRunner.class)
@@ -57,7 +59,6 @@ public class MemberControllerTests {
 		String locationExpected = "/member/2";
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
 		Assert.assertEquals(locationExpected, locationActual);
-		
 	}
 	
 	@Test
@@ -85,7 +86,6 @@ public class MemberControllerTests {
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "mainSkill doesn't reference any skill from skills array";
 		Assert.assertTrue(response.contains(problemTitleExpected));
-		
 	}
 	
 	@Test
@@ -113,7 +113,6 @@ public class MemberControllerTests {
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Member already exists";
 		Assert.assertTrue(response.contains(problemTitleExpected));
-		
 	}
 	
 
@@ -123,8 +122,8 @@ public class MemberControllerTests {
 		// MemberDto
 		/**********************************************/
 		Long id = null;
-		String email = "helsinki@ag04.com";
-		String name = "Helsinki";
+		String email = "bruno@ag04.com";
+		String name = "Bruno";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
 			new MemberSkillDto("combat", "********"),
@@ -143,6 +142,101 @@ public class MemberControllerTests {
 		String problemTitleExpected = "Duplicate member skill names";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 		
+	}
+
+	@Test
+	public void updateMember_updateMemberWithValidData_shouldReturnNoContentStatusWithContentLocationHeader() throws Exception {
+		
+		// SkillArrayDto
+		/**********************************************/
+		String mainSkill = "lock-breaking";
+		List<MemberSkillDto> memberSkillDtos = List.of(
+				new MemberSkillDto("combat", "***"),
+				new MemberSkillDto("money-laundering", "*"),
+				new MemberSkillDto("lock-breaking", "****")
+		);
+		/**********************************************/
+		
+		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		String memberDtoString = mapper.writeValueAsString(dto);
+		String locationExpected = "/member/1/skills";
+		MvcResult mvcResult = this.mvc.perform(
+				put(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isNoContent()).andReturn();		
+		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Content-Location");
+		Assert.assertEquals(locationExpected, locationActual);
+		
+	}
+
+	@Test
+	public void updateMember_updateNonExistingMember_shouldReturnNotFound() throws Exception {
+		
+		// SkillArrayDto
+		/**********************************************/
+		String mainSkill = "lock-breaking";
+		List<MemberSkillDto> memberSkillDtos = List.of(
+				new MemberSkillDto("combat", "***"),
+				new MemberSkillDto("money-laundering", "*"),
+				new MemberSkillDto("lock-breaking", "****")
+		);
+		/**********************************************/
+		
+		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		String memberDtoString = mapper.writeValueAsString(dto);
+		String locationExpected = "/member/999/skills";
+		this.mvc.perform(
+				put(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isNotFound()).andReturn();		
+		
+	}
+	
+	@Test
+	public void updateMember_updateMemberWithInvalidMainSkill_shouldReturnBadRequest() throws Exception {
+		
+		// SkillArrayDto
+		/**********************************************/
+		String mainSkill = "invalid";
+		List<MemberSkillDto> memberSkillDtos = List.of(
+				new MemberSkillDto("combat", "***"),
+				new MemberSkillDto("money-laundering", "*"),
+				new MemberSkillDto("lock-breaking", "****")
+		);
+		/**********************************************/
+		
+		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		String memberDtoString = mapper.writeValueAsString(dto);
+		String locationExpected = "/member/1/skills";
+		MvcResult mvcResult = this.mvc.perform(
+				put(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isBadRequest()).andReturn();	
+
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "mainSkill doesn't reference any skill from skills array";
+		Assert.assertTrue(response.contains(problemTitleExpected));
+		
+	}
+	@Test
+	public void updateMember_updateMemberDuplicateSkillNames_shouldReturnBadRequest() throws Exception {
+		
+		// SkillArrayDto
+		/**********************************************/
+		String mainSkill = "combat";
+		List<MemberSkillDto> memberSkillDtos = List.of(
+				new MemberSkillDto("combat", "***"),
+				new MemberSkillDto("combat", "*"),
+				new MemberSkillDto("lock-breaking", "****")
+		);
+		/**********************************************/
+		
+		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		String memberDtoString = mapper.writeValueAsString(dto);
+		String locationExpected = "/member/1/skills";
+		MvcResult mvcResult = this.mvc.perform(
+				put(locationExpected).contentType(MediaType.APPLICATION_JSON_VALUE).content(memberDtoString))
+				.andExpect(status().isBadRequest()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		String problemTitleExpected = "Duplicate member skill names";
+		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
 	
 }
