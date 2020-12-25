@@ -26,10 +26,17 @@
   		<collection property="memberSkills" column="id" ofType="MemberSkill" select="findMemberSkillsByMemberId"/>
 	</resultMap>
 
+	<select id="findMemberById" resultType="Member" resultMap="memberMap">
+		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		FROM member m
+		LEFT JOIN skill sk ON m.id_main_skill = sk.id
+		WHERE m.id = #{id}
+	</select>
+
 	<select id="findMemberByEmail" resultType="Member" resultMap="memberMap">
 		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
 		FROM member m
-		INNER JOIN skill sk ON m.id_main_skill = sk.id
+		LEFT JOIN skill sk ON m.id_main_skill = sk.id
 		WHERE email = #{email}
 	</select>
 	
@@ -57,6 +64,9 @@
 		SET sex = #{sex}, name = #{name}, email = #{email}, status = #{status}, id_main_skill = #{mainSkill.id}
 		WHERE id = #{id};
 		<foreach collection="memberSkills" item="ms" index="index">
+			DELETE FROM member_skills
+			WHERE id_skill = #{ms.skill.id};
+			
 			INSERT INTO member_skills (id_member, id_skill, level)
 			VALUES (#{id}, #{ms.skill.id}, #{ms.level});
        </foreach>

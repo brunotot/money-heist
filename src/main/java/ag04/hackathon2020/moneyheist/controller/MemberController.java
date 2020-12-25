@@ -4,11 +4,14 @@ import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ag04.hackathon2020.moneyheist.dto.MemberDto;
+import ag04.hackathon2020.moneyheist.dto.SkillArrayDto;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.service.MemberService;
 
@@ -29,6 +32,15 @@ public class MemberController {
 		String memberPath = "/member/" + createdMember.getId();
 		URI locationURI = URI.create(memberPath);
 		return ResponseEntity.created(locationURI).build();
+	}
+	
+	@PutMapping("/{memberId}/skills")
+	public ResponseEntity<Void> updateMemberSkills(@RequestBody SkillArrayDto dto, @PathVariable Long memberId) {
+		Member member = memberService.findById(memberId);
+		member.setMemberSkills(dto);
+		memberService.update(member);
+		String contentLocation = "/member/" + memberId + "/skills";
+		return ResponseEntity.noContent().header("Content-Location", contentLocation).build();
 	}
 	
 }

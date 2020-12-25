@@ -1,6 +1,10 @@
 package ag04.hackathon2020.moneyheist.entity;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import ag04.hackathon2020.moneyheist.dto.MemberSkillDto;
+import ag04.hackathon2020.moneyheist.dto.SkillArrayDto;
 
 public class Member {
 
@@ -61,6 +65,14 @@ public class Member {
 	public Status getStatus() {
 		return status;
 	}
+	
+	public List<Skill> getSkills() {
+		return memberSkills.stream()
+				.filter(ms -> ms != null)
+				.map(ms -> ms.getSkill())
+				.collect(Collectors.toList());
+
+	}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -80,6 +92,27 @@ public class Member {
 
 	public void setMemberSkills(List<MemberSkill> memberSkills) {
 		this.memberSkills = memberSkills;
+	}
+	
+	public void setMemberSkills(SkillArrayDto skillArrayDto) {
+		List<MemberSkillDto> memberSkillDtos = skillArrayDto.getMemberSkillDtos();
+		List<MemberSkill> memberSkills = memberSkillDtos.stream().map(msd -> MemberSkillDto.toEntity(msd)).collect(Collectors.toList());
+		List<Skill> skills = memberSkills.stream().map(ms -> ms.getSkill()).collect(Collectors.toList());
+		this.setMemberSkills(memberSkills);
+		
+		String mainSkillString = skillArrayDto.getMainSkill();
+		if (mainSkillString == null) {
+			this.setMainSkill(null);
+		} else {
+			mainSkillString = mainSkillString.toUpperCase();
+			Skill mainSkill = Skill.find(mainSkillString, skills);
+			if (mainSkill == null) {
+				this.setMainSkill(new Skill(null, mainSkillString));
+			} else {
+				this.setMainSkill(mainSkill);
+			}
+		}
+		
 	}
 
 	public void setMainSkill(Skill mainSkill) {
