@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ag04.hackathon2020.moneyheist.dto.HeistSkillArrayDto;
+import ag04.hackathon2020.moneyheist.dto.HeistSkillDto;
+
 public class Heist {
 
 	private Long id;
@@ -86,6 +89,24 @@ public class Heist {
 
 	public void setHeistSkills(List<HeistSkill> heistSkills) {
 		this.heistSkills = heistSkills;
+	}
+
+	public void setHeistSkills(HeistSkillArrayDto heistSkillArrayDto) {
+		List<HeistSkillDto> heistSkillDtos = heistSkillArrayDto.getHeistSkillDtos();
+		List<HeistSkill> heistSkills = heistSkillDtos.stream().map(hsd -> HeistSkillDto.toEntity(hsd)).collect(Collectors.toList());
+		this.heistSkills.removeIf(hs -> {
+			String level = hs.getLevel();
+			String name = hs.getSkill().getName();
+			for (HeistSkillDto hsd : heistSkillDtos) {
+				String dtoLevel = hsd.getLevel();
+				String dtoName = hsd.getName();
+				if (level.equalsIgnoreCase(dtoLevel) && name.equalsIgnoreCase(dtoName)) {
+					return true;
+				}
+			}
+			return false;
+		});
+		heistSkills.forEach(hs -> this.heistSkills.add(hs));
 	}
 	
 }

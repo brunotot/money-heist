@@ -4,18 +4,18 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SkillArrayDto {
+public class MemberSkillArrayDto {
 
 	@JsonProperty("skills")
 	private List<MemberSkillDto> memberSkillDtos;
 	
 	private String mainSkill;
 
-	public SkillArrayDto() {
+	public MemberSkillArrayDto() {
 		super();
 	}
 
-	public SkillArrayDto(List<MemberSkillDto> memberSkillDtos, String mainSkill) {
+	public MemberSkillArrayDto(List<MemberSkillDto> memberSkillDtos, String mainSkill) {
 		super();
 		this.memberSkillDtos = memberSkillDtos;
 		this.mainSkill = mainSkill;

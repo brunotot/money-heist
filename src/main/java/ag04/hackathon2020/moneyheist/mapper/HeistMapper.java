@@ -16,6 +16,14 @@ public class HeistMapper {
 		this.sqlSessionFactory = sqlSessionFactory;
 	}
 
+	public Heist findById(Long heistId) {
+		SqlSession session = sqlSessionFactory.openSession();
+		Heist heist = session.selectOne("findHeistById", heistId);
+		session.commit();
+		session.close();
+		return heist;
+	}
+
 	public Heist findByName(String heistName) {
 		SqlSession session = sqlSessionFactory.openSession();
 		Heist heist = session.selectOne("findHeistByName", heistName);

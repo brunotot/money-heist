@@ -18,8 +18,8 @@
 		<id property="id" column="id" />
 		<result property="name" column="name" />
 		<result property="location" column="location" />
-        <result property="startTime" column="startTime" javaType="java.util.Date" />
-        <result property="endTime" column="endTime" javaType="java.util.Date" />
+        <result property="startTime" column="start_time" javaType="java.util.Date" />
+        <result property="endTime" column="end_time" javaType="java.util.Date" />
   		<collection property="heistSkills" column="id" ofType="HeistSkill" select="findHeistSkillsByHeistId"/>
 	</resultMap>
 	
@@ -48,7 +48,7 @@
 	    	SELECT id FROM heist WHERE name = #{name}
 	  	</selectKey>
 		INSERT INTO heist (name, location, start_time, end_time)
-		VALUES (#{name}, #{location}, #{startTime}, #{endTime});
+		VALUES (#{name}, #{location}, #{startTime, jdbcType=TIMESTAMP}, #{endTime, jdbcType=TIMESTAMP});
 		<foreach collection="heistSkills" item="hs" index="index">
 			INSERT INTO heist_skills (id_heist, id_skill, level, members)
 			VALUES (SELECT id FROM heist WHERE name = #{name}, #{hs.skill.id}, #{hs.level}, #{hs.members});
@@ -57,13 +57,16 @@
 	
 	<update id="updateHeist" parameterType="Heist">
 		UPDATE heist
-		SET name = #{name}, location = #{location}, start_time = #{startTime}, end_time = #{endTime}
+		SET name = #{name}, location = #{location}, start_time = #{startTime, jdbcType=DATE}, end_time = #{endTime, jdbcType=DATE}
 		WHERE id = #{id};
 		<foreach collection="heistSkills" item="hs" index="index">
 			DELETE FROM heist_skills
 			WHERE id_skill = #{hs.skill.id}
-			AND id_heist = #{id};
+			AND id_heist = #{id}
+			AND level = #{hs.level};
+		</foreach>
 			
+		<foreach collection="heistSkills" item="hs" index="index">
 			INSERT INTO heist_skills (id_heist, id_skill, level, members)
 			VALUES (#{id}, #{hs.skill.id}, #{hs.level}, #{hs.members});
 		</foreach>

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ag04.hackathon2020.moneyheist.dto.MemberDto;
 import ag04.hackathon2020.moneyheist.dto.MemberSkillDto;
-import ag04.hackathon2020.moneyheist.dto.SkillArrayDto;
+import ag04.hackathon2020.moneyheist.dto.MemberSkillArrayDto;
 import ag04.hackathon2020.moneyheist.entity.Sex;
 
 @RunWith(SpringRunner.class)
@@ -158,7 +158,7 @@ public class MemberControllerTests {
 		);
 		/**********************************************/
 		
-		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		MemberSkillArrayDto dto = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		String memberDtoString = mapper.writeValueAsString(dto);
 		String locationExpected = "/member/1/skills";
 		MvcResult mvcResult = this.mvc.perform(
@@ -182,7 +182,7 @@ public class MemberControllerTests {
 		);
 		/**********************************************/
 		
-		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		MemberSkillArrayDto dto = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		String memberDtoString = mapper.writeValueAsString(dto);
 		String locationExpected = "/member/999/skills";
 		this.mvc.perform(
@@ -204,7 +204,7 @@ public class MemberControllerTests {
 		);
 		/**********************************************/
 		
-		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		MemberSkillArrayDto dto = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		String memberDtoString = mapper.writeValueAsString(dto);
 		String locationExpected = "/member/1/skills";
 		MvcResult mvcResult = this.mvc.perform(
@@ -230,7 +230,7 @@ public class MemberControllerTests {
 		);
 		/**********************************************/
 		
-		SkillArrayDto dto = new SkillArrayDto(memberSkillDtos, mainSkill);
+		MemberSkillArrayDto dto = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		String memberDtoString = mapper.writeValueAsString(dto);
 		String locationExpected = "/member/1/skills";
 		MvcResult mvcResult = this.mvc.perform(

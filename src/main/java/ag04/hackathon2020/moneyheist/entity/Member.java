@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ag04.hackathon2020.moneyheist.dto.MemberSkillDto;
-import ag04.hackathon2020.moneyheist.dto.SkillArrayDto;
+import ag04.hackathon2020.moneyheist.dto.MemberSkillArrayDto;
 
 public class Member {
 
@@ -94,7 +94,7 @@ public class Member {
 		this.memberSkills = memberSkills;
 	}
 	
-	public void setMemberSkills(SkillArrayDto skillArrayDto) {
+	public void setMemberSkills(MemberSkillArrayDto skillArrayDto) {
 		List<MemberSkillDto> memberSkillDtos = skillArrayDto.getMemberSkillDtos();
 		List<MemberSkill> memberSkills = memberSkillDtos.stream().map(msd -> MemberSkillDto.toEntity(msd)).collect(Collectors.toList());
 		List<Skill> skills = memberSkills.stream().map(ms -> ms.getSkill()).collect(Collectors.toList());
@@ -112,7 +112,6 @@ public class Member {
 				this.setMainSkill(mainSkill);
 			}
 		}
-		
 	}
 
 	public void setMainSkill(Skill mainSkill) {

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ag04.hackathon2020.moneyheist.dto.MemberDto;
-import ag04.hackathon2020.moneyheist.dto.SkillArrayDto;
+import ag04.hackathon2020.moneyheist.dto.MemberSkillArrayDto;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.service.MemberService;
 
@@ -36,7 +36,7 @@ public class MemberController {
 	}
 	
 	@PutMapping("/{memberId}/skills")
-	public ResponseEntity<Void> updateMemberSkills(@RequestBody SkillArrayDto dto, @PathVariable Long memberId) {
+	public ResponseEntity<Void> updateMemberSkills(@RequestBody MemberSkillArrayDto dto, @PathVariable Long memberId) {
 		Member member = memberService.findById(memberId);
 		member.setMemberSkills(dto);
 		memberService.update(member);
