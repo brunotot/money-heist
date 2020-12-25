@@ -1,12 +1,14 @@
 package ag04.hackathon2020.moneyheist.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ag04.hackathon2020.moneyheist.entity.Member;
+import ag04.hackathon2020.moneyheist.entity.MemberSkill;
 import ag04.hackathon2020.moneyheist.entity.Skill;
 import ag04.hackathon2020.moneyheist.exception.ApiException;
 import ag04.hackathon2020.moneyheist.mapper.MemberMapper;
@@ -74,6 +76,19 @@ public class MemberService {
 			member.setMainSkill(Skill.find(name, createdSkills));
 		}
 		return member;
+	}
+
+	public void deleteMemberSkill(Member member, String skillName) {
+		memberValidator.validateSkillExists(member, skillName);
+		List<MemberSkill> newMemberSkills = member.getMemberSkills().stream()
+				.filter(ms -> !ms.getSkill().getName().equalsIgnoreCase(skillName))
+				.collect(Collectors.toList());
+		member.setMemberSkills(newMemberSkills);
+		Skill mainSkill = member.getMainSkill();
+		if (mainSkill != null && mainSkill.getName().equalsIgnoreCase(skillName)) {
+			member.setMainSkill(null);
+		}
+		update(member);
 	}
 	
 }

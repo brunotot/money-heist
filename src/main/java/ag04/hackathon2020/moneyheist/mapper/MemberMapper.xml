@@ -65,11 +65,19 @@
 		WHERE id = #{id};
 		<foreach collection="memberSkills" item="ms" index="index">
 			DELETE FROM member_skills
-			WHERE id_skill = #{ms.skill.id};
+			WHERE id_skill = #{ms.skill.id}
+			AND id_member = #{id};
 			
 			INSERT INTO member_skills (id_member, id_skill, level)
 			VALUES (#{id}, #{ms.skill.id}, #{ms.level});
-       </foreach>
+		</foreach>
+		
+		DELETE FROM member_skills
+		WHERE id_member = #{id}
+		AND id_skill NOT IN
+		<foreach collection="memberSkills" item="ms" index="index" open="(" separator=","  close=")">
+			#{ms.skill.id}
+		</foreach>
 	</update>
 	
 </mapper>

@@ -10,6 +10,12 @@
         <result property="name" column="name"/>
     </resultMap>
 	
+	<select id="findSkillById" resultType="Skill" resultMap="skillMap">
+		SELECT *
+		FROM skill
+		WHERE id = #{id}
+	</select>
+	
 	<select id="findSkillByName" resultType="Skill" resultMap="skillMap">
 		SELECT *
 		FROM skill

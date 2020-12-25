@@ -69,4 +69,11 @@ public class MemberValidator {
 		}
 	}
 	
+	public void validateSkillExists(Member member, String skillName) {
+		List<Skill> skills = member.getSkills();
+		if (skills.stream().filter(s -> s.getName().equalsIgnoreCase(skillName)).findAny().isEmpty()) {
+			throw new ApiException(HttpStatus.NOT_FOUND, "Member doesn't have the skill", "Member with id: " + member.getId() + " has no skill named: " + skillName,  null);
+		}
+	}
+	
 }
