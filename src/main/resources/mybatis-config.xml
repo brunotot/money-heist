@@ -13,6 +13,7 @@
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Sex" alias="Sex" />
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.HeistSkill" alias="HeistSkill" />
 		<typeAlias type="ag04.hackathon2020.moneyheist.entity.Heist" alias="Heist" />
+		<typeAlias type="ag04.hackathon2020.moneyheist.entity.HeistOutcome" alias="HeistOutcome" />
 	</typeAliases>
 	<environments default="development">
 		<environment id="development">

@@ -19,6 +19,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="status" type="VARCHAR(255)" defaultValue="PLANNING"/>
+            <column name="outcome" type="VARCHAR(255)" defaultValue="NULL">
+            	<constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
     
