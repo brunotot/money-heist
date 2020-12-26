@@ -22,10 +22,13 @@ public class MemberService {
 	
 	private SkillMapper skillMapper;
 	
-	public MemberService(MemberMapper memberMapper, MemberValidator memberValidator, SkillMapper skillMapper) {
+	private MailingService mailingService;
+	
+	public MemberService(MemberMapper memberMapper, MemberValidator memberValidator, SkillMapper skillMapper, MailingService mailingService) {
 		this.memberMapper = memberMapper;
 		this.memberValidator = memberValidator;
 		this.skillMapper = skillMapper;
+		this.mailingService = mailingService;
 	}
 	
 	@Transactional
@@ -42,7 +45,9 @@ public class MemberService {
 		memberValidator.validateIfSkillsUniqueByName(member);
 		memberValidator.validateIfMainSkillProperlyReferenced(member);
 		memberValidator.validateIfProperSkillLevels(member);
-		return saveMemberAndSkills(member);
+		Member newMember = saveMemberAndSkills(member);
+		mailingService.sendMail(newMember.getEmail(), "Added to a heist", "You have been added as a member. Your ID is: " + newMember.getId());
+		return newMember;
 	}
 	
 	public Member findById(Long id) {

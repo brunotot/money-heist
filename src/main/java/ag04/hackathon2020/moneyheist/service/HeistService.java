@@ -32,12 +32,15 @@ public class HeistService {
 	
 	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 	
-	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator, MemberMapper memberMapper, ThreadPoolTaskScheduler threadPoolTaskScheduler) {
+	private MailingService mailingService;
+	
+	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator, MemberMapper memberMapper, ThreadPoolTaskScheduler threadPoolTaskScheduler, MailingService mailingService) {
 		this.heistValidator = heistValidator;
 		this.heistMapper = heistMapper;
 		this.skillMapper = skillMapper;
 		this.memberMapper = memberMapper;
 		this.threadPoolTaskScheduler = threadPoolTaskScheduler;
+		this.mailingService = mailingService;
 	}
 
 	public static Date getDate(int year, int month, int day, int hour, int minute, int second) {
@@ -58,8 +61,8 @@ public class HeistService {
 		heistValidator.validateIfSkillsUniqueByNameAndLevel(heist);
 		heistValidator.validateIfNotExists(heistMapper.findByName(heist.getName()));
 		Heist newHeist = saveHeistAndSkills(heist);
-		threadPoolTaskScheduler.schedule(new StartHeistRunnableTask(heistMapper, heist.getId()), heist.getStartTime().toInstant());
-		threadPoolTaskScheduler.schedule(new EndHeistRunnableTask(heistMapper, heist.getId()), heist.getEndTime().toInstant());	
+		threadPoolTaskScheduler.schedule(new StartHeistRunnableTask(heistMapper, heist.getId(), mailingService), heist.getStartTime().toInstant());
+		threadPoolTaskScheduler.schedule(new EndHeistRunnableTask(heistMapper, heist.getId(), mailingService), heist.getEndTime().toInstant());	
 		return newHeist;
 	}
 	

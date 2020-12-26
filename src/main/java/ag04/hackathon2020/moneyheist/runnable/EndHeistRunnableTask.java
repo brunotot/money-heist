@@ -10,16 +10,20 @@ import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.entity.MemberStatus;
 import ag04.hackathon2020.moneyheist.mapper.HeistMapper;
+import ag04.hackathon2020.moneyheist.service.MailingService;
 
 public class EndHeistRunnableTask implements Runnable {
 	
 	private HeistMapper heistMapper;
 	
+	private MailingService mailingService;
+	
 	private Long heistId;
 	
-	public EndHeistRunnableTask(HeistMapper heistMapper, Long heistId) {
+	public EndHeistRunnableTask(HeistMapper heistMapper, Long heistId, MailingService mailingService) {
 		this.heistMapper = heistMapper;
 		this.heistId = heistId;
+		this.mailingService = mailingService;
 	}
 
 	@Override
@@ -64,7 +68,8 @@ public class EndHeistRunnableTask implements Runnable {
 			}
 			heist.setHeistMembers(heistMembers);
 			heist.setHeistOutcome(outcome);
-			heistMapper.save(heist);
+			Heist newHeist = heistMapper.save(heist);
+			newHeist.getHeistMembers().forEach(m -> mailingService.sendMail(m.getEmail(), "Heist finished", "Heist with ID: " + heistId + " has finished. Its outcome was: " + newHeist.getHeistOutcome()));
 		}
 	}
 	

@@ -90,6 +90,10 @@
 				<foreach collection="heistMembers" item="hm" index="index">
 					INSERT INTO heist_members (id_heist, id_member)
 					VALUES (#{id}, #{hm.id});
+					
+					UPDATE member
+					SET status = #{hm.status}
+					WHERE id = #{hm.id};
 				</foreach>
 			</when>
 		</choose>

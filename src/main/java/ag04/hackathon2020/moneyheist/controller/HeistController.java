@@ -25,6 +25,7 @@ import ag04.hackathon2020.moneyheist.entity.HeistOutcome;
 import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.service.HeistService;
+import ag04.hackathon2020.moneyheist.service.MailingService;
 import ag04.hackathon2020.moneyheist.service.MemberService;
 import ag04.hackathon2020.moneyheist.validation.HeistValidator;
 
@@ -38,10 +39,13 @@ public class HeistController {
 	
 	private HeistValidator heistValidator;
 	
-	public HeistController(HeistService heistService, MemberService memberService, HeistValidator heistValidator) {
+	private MailingService mailingService;
+	
+	public HeistController(HeistService heistService, MemberService memberService, HeistValidator heistValidator, MailingService mailingService) {
 		this.heistService = heistService;
 		this.memberService = memberService;
 		this.heistValidator = heistValidator;
+		this.mailingService = mailingService;
 	}
 
 	@PostMapping
@@ -102,6 +106,7 @@ public class HeistController {
 		Heist heist = heistService.findById(heistId);
 		heistValidator.validateIfProperHeistStatus(heist, List.of(HeistStatus.READY, HeistStatus.IN_PROGRESS, HeistStatus.FINISHED));
 		List<Member> heistMembers = heist.getHeistMembers();
+		heistMembers.forEach(m -> mailingService.sendMail(m.getEmail(), "Heist confirmed", "You have been confirmed to participate in a heist with ID: " + heistId));
 		List<MemberDto> heistMemberDtos = heistMembers.stream().map(m -> MemberDto.toDto(m)).collect(Collectors.toList());
 		return ResponseEntity.ok(heistMemberDtos);
 	}
