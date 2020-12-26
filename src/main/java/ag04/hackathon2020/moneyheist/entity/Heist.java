@@ -1,6 +1,6 @@
 package ag04.hackathon2020.moneyheist.entity;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,9 +15,9 @@ public class Heist {
 	
 	private String location;
 	
-	private Date startTime;
+	private ZonedDateTime startTime;
 	
-	private Date endTime;
+	private ZonedDateTime endTime;
 	
 	private List<HeistSkill> heistSkills;
 
@@ -29,7 +29,7 @@ public class Heist {
 		super();
 	}
 
-	public Heist(Long id, String name, String location, Date startTime, Date endTime, List<HeistSkill> heistSkills, HeistStatus heistStatus, List<Member> heistMembers) {
+	public Heist(Long id, String name, String location, ZonedDateTime startTime, ZonedDateTime endTime, List<HeistSkill> heistSkills, HeistStatus heistStatus, List<Member> heistMembers) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -53,11 +53,11 @@ public class Heist {
 		return location;
 	}
 
-	public Date getStartTime() {
+	public ZonedDateTime getStartTime() {
 		return startTime;
 	}
 
-	public Date getEndTime() {
+	public ZonedDateTime getEndTime() {
 		return endTime;
 	}
 
@@ -92,11 +92,11 @@ public class Heist {
 		this.location = location;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(ZonedDateTime startTime) {
 		this.startTime = startTime;
 	}
 
-	public void setEndTime(Date endTime) {
+	public void setEndTime(ZonedDateTime endTime) {
 		this.endTime = endTime;
 	}
 	

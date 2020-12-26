@@ -1,7 +1,10 @@
 package ag04.hackathon2020.moneyheist.service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +15,8 @@ import ag04.hackathon2020.moneyheist.entity.Skill;
 import ag04.hackathon2020.moneyheist.mapper.HeistMapper;
 import ag04.hackathon2020.moneyheist.mapper.MemberMapper;
 import ag04.hackathon2020.moneyheist.mapper.SkillMapper;
+import ag04.hackathon2020.moneyheist.runnable.EndHeistRunnableTask;
+import ag04.hackathon2020.moneyheist.runnable.StartHeistRunnableTask;
 import ag04.hackathon2020.moneyheist.validation.HeistValidator;
 
 @Service
@@ -25,19 +30,37 @@ public class HeistService {
 	
 	private HeistValidator heistValidator;
 	
-	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator, MemberMapper memberMapper) {
+	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+	
+	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator, MemberMapper memberMapper, ThreadPoolTaskScheduler threadPoolTaskScheduler) {
 		this.heistValidator = heistValidator;
 		this.heistMapper = heistMapper;
 		this.skillMapper = skillMapper;
 		this.memberMapper = memberMapper;
+		this.threadPoolTaskScheduler = threadPoolTaskScheduler;
 	}
+
+	public static Date getDate(int year, int month, int day, int hour, int minute, int second) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, second);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
 	
 	@Transactional
 	public Heist create(Heist heist) {
 		heistValidator.validateIfProperDates(heist);
 		heistValidator.validateIfSkillsUniqueByNameAndLevel(heist);
 		heistValidator.validateIfNotExists(heistMapper.findByName(heist.getName()));
-		return saveHeistAndSkills(heist);
+		Heist newHeist = saveHeistAndSkills(heist);
+		threadPoolTaskScheduler.schedule(new StartHeistRunnableTask(heistMapper, heist.getId()), heist.getStartTime().toInstant());
+		threadPoolTaskScheduler.schedule(new EndHeistRunnableTask(heistMapper, heist.getId()), heist.getEndTime().toInstant());	
+		return newHeist;
 	}
 	
 	@Transactional

@@ -1,6 +1,6 @@
 package ag04.hackathon2020.moneyheist.validation;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -17,10 +17,10 @@ import ag04.hackathon2020.moneyheist.exception.ApiException;
 public class HeistValidator {
 	
 	public void validateIfProperDates(Heist heist) {
-		Long start = heist.getStartTime().getTime();
-		Long current = new Date().getTime();
-		Long end = heist.getEndTime().getTime();
-		if (start < current || end < current || start > end) {
+		ZonedDateTime start = heist.getStartTime();
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime end = heist.getEndTime();
+		if (start.isAfter(end) || start.isBefore(now)) {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid dates", "Invalid startTime and/or endTime parameters given. Please, make sure to give startTime latter than now and endTime that is after startTime", null);
 		}
 	}

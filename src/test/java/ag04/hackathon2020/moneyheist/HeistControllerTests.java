@@ -1,8 +1,6 @@
 package ag04.hackathon2020.moneyheist;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -34,9 +32,8 @@ public class HeistControllerTests {
 	public void createHeist_addValidHeistObject_shouldReturnCreatedStatusWithLocationHeader() throws Exception {
 		String name = "Test heist 2";
 		String location = "Croatia";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-		Date startTime = sdf.parse("2020-12-27T22:00:00.000Z");
-		Date endTime = sdf.parse("2020-12-28T18:00:00.000Z");
+		String startTime = "2020-12-27T22:00:00.000Z";
+		String endTime = "2020-12-28T18:00:00.000Z";
 		List<HeistSkillDto> heistSkillDtos = List.of(
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "**", 3)
@@ -58,9 +55,8 @@ public class HeistControllerTests {
 	public void createHeist_addHeistWithNameThatAlreadyExists_shouldReturnBadRequest() throws Exception {
 		String name = "Test heist";
 		String location = "Croatia";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-		Date startTime = sdf.parse("2020-12-27T22:00:00.000Z");
-		Date endTime = sdf.parse("2020-12-28T18:00:00.000Z");
+		String startTime = "2020-12-27T22:00:00.000Z";
+		String endTime = "2020-12-28T18:00:00.000Z";
 		List<HeistSkillDto> heistSkillDtos = List.of(
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "**", 3)
@@ -82,9 +78,8 @@ public class HeistControllerTests {
 	public void createHeist_addHeistWithDuplicateSkills_shouldReturnBadRequest() throws Exception {
 		String name = "Test heist";
 		String location = "Croatia";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-		Date startTime = sdf.parse("2020-12-27T22:00:00.000Z");
-		Date endTime = sdf.parse("2020-12-28T18:00:00.000Z");
+		String startTime = "2020-12-27T22:00:00.000Z";
+		String endTime = "2020-12-28T18:00:00.000Z";
 		List<HeistSkillDto> heistSkillDtos = List.of(
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "*****", 3)
@@ -106,9 +101,8 @@ public class HeistControllerTests {
 	public void createHeist_addHeistWithInvalidDates_shouldReturnBadRequest() throws Exception {
 		String name = "Test heist 2";
 		String location = "Croatia";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-		Date startTime = sdf.parse("2019-12-27T22:00:00.000Z");
-		Date endTime = sdf.parse("2020-12-28T18:00:00.000Z");
+		String startTime = "2019-12-27T22:00:00.000Z";
+		String endTime = "2020-12-28T18:00:00.000Z";
 		List<HeistSkillDto> heistSkillDtos = List.of(
 			new HeistSkillDto("combat", "*****", 1),
 			new HeistSkillDto("combat", "*****", 3)

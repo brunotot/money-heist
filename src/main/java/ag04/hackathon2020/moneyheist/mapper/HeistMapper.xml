@@ -18,8 +18,8 @@
 		<id property="id" column="id" />
 		<result property="name" column="name" />
 		<result property="location" column="location" />
-        <result property="startTime" column="start_time" javaType="java.util.Date" />
-        <result property="endTime" column="end_time" javaType="java.util.Date" />
+        <result property="startTime" column="start_time" javaType="java.time.ZonedDateTime" />
+        <result property="endTime" column="end_time" javaType="java.time.ZonedDateTime" />
         <result property="heistStatus" column="status" javaType="HeistStatus" />
   		<collection property="heistSkills" column="id" ofType="HeistSkill" select="findHeistSkillsByHeistId"/>
   		<collection property="heistMembers" column="id" ofType="Member" select="findHeistMembers"/>
@@ -67,7 +67,7 @@
 	
 	<update id="updateHeist" parameterType="Heist">
 		UPDATE heist
-		SET name = #{name}, location = #{location}, start_time = #{startTime, jdbcType=DATE}, end_time = #{endTime, jdbcType=DATE}, status = #{heistStatus}
+		SET name = #{name}, location = #{location}, start_time = #{startTime, jdbcType=TIMESTAMP}, end_time = #{endTime, jdbcType=TIMESTAMP}, status = #{heistStatus}
 		WHERE id = #{id};
 		
 		<foreach collection="heistSkills" item="hs" index="index">

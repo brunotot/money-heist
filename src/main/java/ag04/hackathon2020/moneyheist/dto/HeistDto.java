@@ -1,6 +1,7 @@
 package ag04.hackathon2020.moneyheist.dto;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,10 +15,10 @@ public class HeistDto {
 	private String name;
 	
 	private String location;
-	
-	private Date startTime;
-	
-	private Date endTime;
+
+    private String startTime;
+
+    private String endTime;
 	
 	private HeistStatus heistStatus;
 	
@@ -25,7 +26,7 @@ public class HeistDto {
 		super();
 	}
 
-	public HeistDto(String name, String location, Date startTime, Date endTime, List<HeistSkillDto> heistSkillDtos, HeistStatus heistStatus) {
+	public HeistDto(String name, String location, String startTime, String endTime, List<HeistSkillDto> heistSkillDtos, HeistStatus heistStatus) {
 		super();
 		this.name = name;
 		this.location = location;
@@ -46,11 +47,11 @@ public class HeistDto {
 		return location;
 	}
 
-	public Date getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
-	public Date getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
 
@@ -70,11 +71,11 @@ public class HeistDto {
 		this.location = location;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 
-	public void setEndTime(Date endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
 
@@ -87,24 +88,26 @@ public class HeistDto {
 	}
 
 	public static Heist toEntity(HeistDto dto) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 		Heist heist = new Heist();
 		heist.setName(dto.getName());
 		heist.setLocation(dto.getLocation());
-		heist.setStartTime(dto.getStartTime());
-		heist.setEndTime(dto.getEndTime());
+		heist.setStartTime(ZonedDateTime.parse(dto.getStartTime(), formatter));
+		heist.setEndTime(ZonedDateTime.parse(dto.getEndTime(), formatter));
 		heist.setHeistSkills(dto.getHeistSkillDtos().stream().map(hsd -> HeistSkillDto.toEntity(hsd)).collect(Collectors.toList()));
-		heist.setHeistStatus(dto.getHeistStatus());
+		heist.setHeistStatus(dto.getHeistStatus() == null ? HeistStatus.PLANNING : dto.getHeistStatus());
 		return heist;
 	}
 
 	public static HeistDto toDto(Heist entity) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 		HeistDto dto = new HeistDto();
 		dto.setName(entity.getName());
 		dto.setLocation(entity.getLocation());
-		dto.setStartTime(entity.getStartTime());
-		dto.setEndTime(entity.getEndTime());
+		dto.setStartTime(entity.getStartTime().format(formatter));
+		dto.setEndTime(entity.getEndTime().format(formatter));
 		dto.setHeistSkillDtos(entity.getHeistSkills().stream().map(hs -> HeistSkillDto.toDto(hs)).collect(Collectors.toList()));
-		dto.setHeistStatus(entity.getHeistStatus());
+		dto.setHeistStatus(entity.getHeistStatus() == null ? HeistStatus.PLANNING : entity.getHeistStatus());
 		return dto;
 	}
 	
