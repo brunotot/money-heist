@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.10.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+    
+	<changeSet author="bruno.tot" id="1">
+        <createTable tableName="heist_members">
+            <column name="id_member" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_heist" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet author="bruno.tot" id="2">
+        <createIndex indexName="fk_heist_members_heist1_idx" tableName="heist_members">
+            <column name="id_heist"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="bruno.tot" id="3">
+        <createIndex indexName="fk_heist_members_member1_idx" tableName="heist_members">
+            <column name="id_member"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet author="bruno.tot" id="4">
+        <addForeignKeyConstraint baseColumnNames="id_member" baseTableName="heist_members" constraintName="fk_heist_members_heist1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="member" validate="true"/>
+    </changeSet>
+    <changeSet author="bruno.tot" id="5">
+        <addForeignKeyConstraint baseColumnNames="id_heist" baseTableName="heist_members" constraintName="fk_heist_members_member1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="heist" validate="true"/>
+    </changeSet>
+    
+</databaseChangeLog>

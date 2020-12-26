@@ -11,4 +11,5 @@
     <include file="db/changelog/changelog-heist-skills-table-definition.xml"/>
     <include file="db/changelog/changelog-heist-data-population.xml"/>
     <include file="db/changelog/changelog-heist-skills-data-population.xml"/>
+    <include file="db/changelog/changelog-heist-members-table-definition.xml"/>
 </databaseChangeLog>
