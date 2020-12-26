@@ -1,5 +1,7 @@
 package ag04.hackathon2020.moneyheist;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public class HeistControllerTests {
 	@Autowired
 	private RequestHelper requestHelper;
 
+	private int creationId = 4;
+	
 	@Test
 	public void createHeist_addValidHeistObject_shouldReturnCreatedStatusWithLocationHeader() throws Exception {
 		String name = "Test heist 2";
@@ -45,8 +49,9 @@ public class HeistControllerTests {
 		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
-	
-		String locationExpected = "/heist/4";
+
+		creationId++;
+		String locationExpected = "/heist/" + creationId;
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
 		Assert.assertEquals(locationExpected, locationActual);
 	}
@@ -359,6 +364,40 @@ public class HeistControllerTests {
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
 		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void testAutomatism() throws Exception {
+		String name = "Bruno!";
+		String location = "Croatia";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		ZonedDateTime now = ZonedDateTime.now();
+		long timeToSleepUntilStart = 5L;
+		long timeToSleepUntilEnd = 10L;
+		String startTime = now.plusSeconds(timeToSleepUntilStart).format(formatter);
+		String endTime = now.plusSeconds(timeToSleepUntilEnd).format(formatter);
+		List<HeistSkillDto> heistSkillDtos = List.of(
+			new HeistSkillDto("ATTACK", "*", 1),
+			new HeistSkillDto("DEFENSE", "*", 1)
+		);
+		HeistStatus heistStatus = HeistStatus.PLANNING;
+
+		RequestMethod method = RequestMethod.POST;
+		String path = "/heist";
+		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
+		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		
+		Object membersToConfirm = Collections.singletonMap("members", List.of("Helsinki"));
+		requestHelper.sendRequest(RequestMethod.PUT, "/heist/" + creationId + "/members", membersToConfirm, HttpStatus.NO_CONTENT);
+		creationId++;
+
+		Thread.sleep(timeToSleepUntilEnd * 1000);
+		MvcResult mvcResult = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
+		
+		String response = mvcResult.getResponse().getContentAsString();
+		String status = "FINISHED";
+		Assert.assertTrue(response.contains(status));
 	}
 	
 }
