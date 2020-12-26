@@ -6,7 +6,7 @@
 			<column name="id" value="1"/>
 			<column name="sex" value="M"/>
 			<column name="name" value="Helsinki"/>
-			<column name="email" value="helsinki@ag04.com"/>
+			<column name="email" value="brunotot10000@gmail.com"/>
 			<column name="id_main_skill" value="1"/>
 			<column name="status" value="AVAILABLE"/>
 		</insert>
