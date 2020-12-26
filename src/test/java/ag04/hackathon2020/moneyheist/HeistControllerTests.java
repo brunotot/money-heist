@@ -46,7 +46,7 @@ public class HeistControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/heist";
-		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
+		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -70,7 +70,7 @@ public class HeistControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/heist";
-		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
+		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -93,7 +93,7 @@ public class HeistControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/heist";
-		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
+		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -116,7 +116,7 @@ public class HeistControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/heist";
-		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
+		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -367,13 +367,13 @@ public class HeistControllerTests {
 	}
 	
 	@Test
-	public void testAutomatism() throws Exception {
+	public void testAutomaticHeistStartAndFinish() throws Exception {
 		String name = "Bruno!";
 		String location = "Croatia";
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 		ZonedDateTime now = ZonedDateTime.now();
-		long timeToSleepUntilStart = 5L;
-		long timeToSleepUntilEnd = 10L;
+		long timeToSleepUntilStart = 2L;
+		long timeToSleepUntilEnd = 4L;
 		String startTime = now.plusSeconds(timeToSleepUntilStart).format(formatter);
 		String endTime = now.plusSeconds(timeToSleepUntilEnd).format(formatter);
 		List<HeistSkillDto> heistSkillDtos = List.of(
@@ -384,7 +384,7 @@ public class HeistControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/heist";
-		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus);
+		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
 		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 		
@@ -392,12 +392,16 @@ public class HeistControllerTests {
 		requestHelper.sendRequest(RequestMethod.PUT, "/heist/" + creationId + "/members", membersToConfirm, HttpStatus.NO_CONTENT);
 		creationId++;
 
-		Thread.sleep(timeToSleepUntilEnd * 1000);
+		Thread.sleep(timeToSleepUntilStart * 1000);
 		MvcResult mvcResult = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
+		String responseInProgress = mvcResult.getResponse().getContentAsString();
 		
-		String response = mvcResult.getResponse().getContentAsString();
-		String status = "FINISHED";
-		Assert.assertTrue(response.contains(status));
+		Thread.sleep(timeToSleepUntilStart * 1000);
+		MvcResult mvcResultFinished = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
+		String responseFinished = mvcResultFinished.getResponse().getContentAsString();
+
+		Assert.assertTrue(responseInProgress.contains("IN_PROGRESS"));
+		Assert.assertTrue(responseFinished.contains("FINISHED"));
 	}
 	
 }
