@@ -7,7 +7,8 @@
 	
 	<resultMap type="MemberSkill" id="memberSkillResult">
 		<result property="level" column="level" />
-        <association property="skill" javaType="Skill">
+        <result property="experience" column="experience"/>
+       	<association property="skill" javaType="Skill">
 	        <result property="id" column="skilLId"/>
 	        <result property="name" column="skillName"/>
         </association>
@@ -48,7 +49,7 @@
 	</select>
 	
 	<select id="findMemberSkillsByMemberId" resultType="MemberSkill" resultMap="memberSkillResult">
-		SELECT ms.level AS level, s.id AS skillId, s.name AS skillName
+		SELECT ms.level AS level, s.id AS skillId, s.name AS skillName, ms.experience AS experience
 		FROM member_skills ms
 		INNER JOIN skill s ON ms.id_skill = s.id
 		WHERE ms.id_member = #{id}
@@ -76,8 +77,8 @@
 			AND id_member = #{id};
 		</foreach>
 		<foreach collection="memberSkills" item="ms" index="index">
-			INSERT INTO member_skills (id_member, id_skill, level)
-			VALUES (#{id}, #{ms.skill.id}, #{ms.level});
+			INSERT INTO member_skills (id_member, id_skill, level, experience)
+			VALUES (#{id}, #{ms.skill.id}, #{ms.level}, #{ms.experience});
 		</foreach>
 		
 		DELETE FROM member_skills

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,9 @@ public class HeistService {
 	
 	private MailingService mailingService;
 	
+	@Value("${levelUpTime}")
+	private Integer levelUpTime;
+	
 	public HeistService(HeistMapper heistMapper, SkillMapper skillMapper, HeistValidator heistValidator, MemberMapper memberMapper, ThreadPoolTaskScheduler threadPoolTaskScheduler, MailingService mailingService) {
 		this.heistValidator = heistValidator;
 		this.heistMapper = heistMapper;
@@ -62,7 +66,7 @@ public class HeistService {
 		heistValidator.validateIfNotExists(heistMapper.findByName(heist.getName()));
 		Heist newHeist = saveHeistAndSkills(heist);
 		threadPoolTaskScheduler.schedule(new StartHeistRunnableTask(heistMapper, heist.getId(), mailingService), heist.getStartTime().toInstant());
-		threadPoolTaskScheduler.schedule(new EndHeistRunnableTask(heistMapper, heist.getId(), mailingService), heist.getEndTime().toInstant());	
+		threadPoolTaskScheduler.schedule(new EndHeistRunnableTask(heistMapper, heist, mailingService, levelUpTime), heist.getEndTime().toInstant());	
 		return newHeist;
 	}
 	

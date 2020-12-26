@@ -94,6 +94,13 @@
 					UPDATE member
 					SET status = #{hm.status}
 					WHERE id = #{hm.id};
+					
+					<foreach collection="hm.memberSkills" item="ms">
+						UPDATE member_skills
+						SET level = #{ms.level}, experience = #{ms.experience}
+						WHERE id_skill = #{ms.skill.id} AND
+						id_member = #{hm.id};
+					</foreach>
 				</foreach>
 			</when>
 		</choose>

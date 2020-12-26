@@ -18,7 +18,7 @@ public class HeistValidator {
 	
 	public void validateIfProperDates(Heist heist) {
 		ZonedDateTime start = heist.getStartTime();
-		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime now = ZonedDateTime.now().minusSeconds(2L);
 		ZonedDateTime end = heist.getEndTime();
 		if (start.isAfter(end) || start.isBefore(now)) {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid dates", "Invalid startTime and/or endTime parameters given. Please, make sure to give startTime latter than now and endTime that is after startTime", null);

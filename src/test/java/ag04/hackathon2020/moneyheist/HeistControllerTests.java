@@ -372,10 +372,10 @@ public class HeistControllerTests {
 		String location = "Croatia";
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 		ZonedDateTime now = ZonedDateTime.now();
-		long timeToSleepUntilStart = 2L;
-		long timeToSleepUntilEnd = 4L;
-		String startTime = now.plusSeconds(timeToSleepUntilStart).format(formatter);
-		String endTime = now.plusSeconds(timeToSleepUntilEnd).format(formatter);
+		long delay = 2L;
+		long delayForMails = 2L;
+		String startTime = now.plusSeconds(delay).format(formatter);
+		String endTime = now.plusSeconds(delay * 2).format(formatter);
 		List<HeistSkillDto> heistSkillDtos = List.of(
 			new HeistSkillDto("ATTACK", "*", 1),
 			new HeistSkillDto("DEFENSE", "*", 1)
@@ -392,11 +392,11 @@ public class HeistControllerTests {
 		requestHelper.sendRequest(RequestMethod.PUT, "/heist/" + creationId + "/members", membersToConfirm, HttpStatus.NO_CONTENT);
 		creationId++;
 
-		Thread.sleep(timeToSleepUntilStart * 1000);
+		Thread.sleep(delay * 1000);
 		MvcResult mvcResult = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
 		String responseInProgress = mvcResult.getResponse().getContentAsString();
 		
-		Thread.sleep(timeToSleepUntilStart * 1000);
+		Thread.sleep((delay + delayForMails) * 1000);
 		MvcResult mvcResultFinished = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
 		String responseFinished = mvcResultFinished.getResponse().getContentAsString();
 
