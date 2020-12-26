@@ -232,5 +232,41 @@ public class MemberControllerTests {
 		String problemTitleExpected = "Member doesn't have the skill";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
+	
+	@Test
+	public void getMember_getExistingMember_shouldReturnOk() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/member/1";
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.OK;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getMember_getNonExistingMember_shouldReturnNotFound() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/member/99";
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getMemberSkills_getExistingMemberSkills_shouldReturnOk() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/member/1/skills";
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.OK;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getMemberSkills_getNonExistingMemberSkills_shouldReturnNotFound() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/member/99/skills";
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
 
 }

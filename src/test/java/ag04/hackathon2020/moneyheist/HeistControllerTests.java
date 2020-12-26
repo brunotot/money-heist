@@ -272,7 +272,7 @@ public class HeistControllerTests {
 		String problemTitleExpected = "Heist not found";
 		Assert.assertTrue(response.contains(problemTitleExpected));
 	}
-	
+
 	@Test
 	public void startHeist_startHeistWhichDoesntHaveReadyStatus_shouldReturnMethodNotAllowed() throws Exception {
 		RequestMethod method = RequestMethod.PUT;
@@ -284,6 +284,87 @@ public class HeistControllerTests {
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist status is not READY";
 		Assert.assertTrue(response.contains(problemTitleExpected));
+	}
+	
+	@Test
+	public void getHeist_getExistingHeist_shouldReturnOk() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/1";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.OK;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+
+	@Test
+	public void getHeist_getNonExistingHeist_shouldReturnNotFound() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/99";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistMembers_getExistingAndValidHeistMembers_shouldReturnOk() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/3/members";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.OK;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistMembers_getNonExistingHeistMembers_shouldReturnNotFound() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/99/members";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistMembers_getExistingAndInvalidHeistMembers_shouldReturnMethodNotAllowed() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/1/members";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.METHOD_NOT_ALLOWED;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistSkills_getExistingHeistSkills_shouldReturnOk() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/1/skills";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.OK;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistSkills_getNonExistingHeistSkills_shouldReturnNotFound() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/99/skills";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistStatus_getExistingHeistSkills_shouldReturnOk() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/1/status";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.OK;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+	}
+	
+	@Test
+	public void getHeistStatus_getNonExistingHeistSkills_shouldReturnNotFound() throws Exception {
+		RequestMethod method = RequestMethod.GET;
+		String path = "/heist/99/status";	
+		Object body = null;
+		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 	}
 	
 }
