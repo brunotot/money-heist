@@ -10,6 +10,7 @@
                 <constraints nullable="false"/>
             </column>
             <column defaultValue="*" name="level" type="VARCHAR(10)"/>
+            <column defaultValue="0" name="experience" type="INT"/>
         </createTable>
     </changeSet>
     
