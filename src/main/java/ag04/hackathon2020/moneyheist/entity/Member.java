@@ -3,8 +3,8 @@ package ag04.hackathon2020.moneyheist.entity;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ag04.hackathon2020.moneyheist.dto.MemberSkillDto;
 import ag04.hackathon2020.moneyheist.dto.MemberSkillArrayDto;
+import ag04.hackathon2020.moneyheist.dto.MemberSkillDto;
 
 public class Member {
 

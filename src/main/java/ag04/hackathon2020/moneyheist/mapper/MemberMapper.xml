@@ -14,7 +14,7 @@
 	</resultMap>
     
 	<resultMap type="Member" id="memberMap">
-		<id property="id" column="id" />
+		<id property="id" column="id"/>
 		<result property="sex" column="sex" />
 		<result property="email" column="email" />
 		<result property="name" column="name" />

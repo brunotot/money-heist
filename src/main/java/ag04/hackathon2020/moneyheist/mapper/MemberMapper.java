@@ -43,6 +43,14 @@ public class MemberMapper {
 		return member;
 	}
 	
+	public List<Member> findEligibleMembers(Heist heist) {
+		SqlSession session = sqlSessionFactory.openSession();
+		List<Member> members = session.selectList("findEligibleMembers", heist);
+		session.commit();
+		session.close();
+		return members;
+	}
+	
 	@Transactional
 	public Member save(Member member) {
 		SqlSession session = sqlSessionFactory.openSession();
@@ -62,14 +70,6 @@ public class MemberMapper {
 		session.commit();
 		session.close();
 		return member;
-	}
-	
-	public List<Member> findEligibleMembers(Heist heist) {
-		SqlSession session = sqlSessionFactory.openSession();
-		List<Member> members = session.selectList("findEligibleMembers", heist);
-		session.commit();
-		session.close();
-		return members;
 	}
 	
 }

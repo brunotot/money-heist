@@ -6,14 +6,12 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ag04.hackathon2020.moneyheist.entity.Member;
+import ag04.hackathon2020.moneyheist.entity.MemberStatus;
 import ag04.hackathon2020.moneyheist.entity.Sex;
 import ag04.hackathon2020.moneyheist.entity.Skill;
-import ag04.hackathon2020.moneyheist.entity.MemberStatus;
 
 public class MemberDto {
 
-	private Long id;
-	
 	private String email;
 	
 	private String name;
@@ -31,10 +29,9 @@ public class MemberDto {
 		super();
 	}
 
-	public MemberDto(Long id, String email, String name, Sex sex, List<MemberSkillDto> memberSkillDtos, String mainSkill,
+	public MemberDto(String email, String name, Sex sex, List<MemberSkillDto> memberSkillDtos, String mainSkill,
 			String status) {
 		super();
-		this.id = id;
 		this.email = email;
 		this.name = name;
 		this.sex = sex;
@@ -42,11 +39,7 @@ public class MemberDto {
 		this.mainSkill = mainSkill;
 		this.status = status;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
+	
 	public String getEmail() {
 		return email;
 	}
@@ -69,10 +62,6 @@ public class MemberDto {
 
 	public String getStatus() {
 		return status;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public void setEmail(String email) {
@@ -102,7 +91,6 @@ public class MemberDto {
 	public static Member toEntity(MemberDto dto) {
 		Member entity = new Member();
 		entity.setEmail(dto.getEmail());
-		entity.setId(dto.getId());
 		entity.setName(dto.getName());
 		entity.setSex(dto.getSex());
 		entity.setStatus(dto.getStatus() == null ? null : MemberStatus.valueOf(dto.getStatus().toUpperCase()));
@@ -113,7 +101,6 @@ public class MemberDto {
 	
 	public static MemberDto toDto(Member entity) {
 		MemberDto dto = new MemberDto();
-		dto.setId(entity.getId());
 		dto.setName(entity.getName());
 		dto.setSex(entity.getSex());
 		dto.setEmail(entity.getEmail());

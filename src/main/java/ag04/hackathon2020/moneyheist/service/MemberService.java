@@ -3,14 +3,12 @@ package ag04.hackathon2020.moneyheist.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.entity.MemberSkill;
 import ag04.hackathon2020.moneyheist.entity.Skill;
-import ag04.hackathon2020.moneyheist.exception.ApiException;
 import ag04.hackathon2020.moneyheist.mapper.MemberMapper;
 import ag04.hackathon2020.moneyheist.mapper.SkillMapper;
 import ag04.hackathon2020.moneyheist.validation.MemberValidator;
@@ -32,26 +30,24 @@ public class MemberService {
 	
 	@Transactional
 	public Member update(Member member) {
-		memberValidator.validateDuplicateSkillNames(member);
-		memberValidator.validateMainSkillReference(member);
-		memberValidator.validateSkillLevels(member);
+		memberValidator.validateIfSkillsUniqueByName(member);
+		memberValidator.validateIfMainSkillProperlyReferenced(member);
+		memberValidator.validateIfProperSkillLevels(member);
 		return saveMemberAndSkills(member);
 	}
 	
 	@Transactional
 	public Member create(Member member) {
-		memberValidator.validateMemberAlreadyExists(member);
-		memberValidator.validateDuplicateSkillNames(member);
-		memberValidator.validateMainSkillReference(member);
-		memberValidator.validateSkillLevels(member);
+		memberValidator.validateIfNotExists(memberMapper.findByEmail(member.getEmail()));
+		memberValidator.validateIfSkillsUniqueByName(member);
+		memberValidator.validateIfMainSkillProperlyReferenced(member);
+		memberValidator.validateIfProperSkillLevels(member);
 		return saveMemberAndSkills(member);
 	}
 	
 	public Member findById(Long id) {
 		Member member = memberMapper.findById(id);
-		if (member == null) {
-			throw new ApiException(HttpStatus.NOT_FOUND, "Member not found", "Member with id: " + id + " not found", null);
-		}
+		memberValidator.validateIfExists(member);
 		return member;
 	}
 
@@ -63,9 +59,7 @@ public class MemberService {
 	
 	public Member findByName(String name) {
 		Member member = memberMapper.findByName(name);
-		if (member == null) {
-			throw new ApiException(HttpStatus.NOT_FOUND, "Member not found", "Member with name: " + name + " not found", null);
-		}
+		memberValidator.validateIfExists(member);
 		return member;
 	}
 	
@@ -93,7 +87,7 @@ public class MemberService {
 	}
 
 	public void deleteMemberSkill(Member member, String skillName) {
-		memberValidator.validateSkillExists(member, skillName);
+		memberValidator.validateIfSkillExistsOnMember(member, skillName);
 		List<MemberSkill> newMemberSkills = member.getMemberSkills().stream()
 				.filter(ms -> !ms.getSkill().getName().equalsIgnoreCase(skillName))
 				.collect(Collectors.toList());

@@ -22,6 +22,7 @@
         <result property="endTime" column="end_time" javaType="java.util.Date" />
         <result property="heistStatus" column="status" javaType="HeistStatus" />
   		<collection property="heistSkills" column="id" ofType="HeistSkill" select="findHeistSkillsByHeistId"/>
+  		<collection property="heistMembers" column="id" ofType="Member" select="findHeistMembers"/>
 	</resultMap>
 	
 	<select id="findHeistById" resultType="Heist" resultMap="heistMap">
@@ -53,24 +54,45 @@
 		<foreach collection="heistSkills" item="hs" index="index">
 			INSERT INTO heist_skills (id_heist, id_skill, level, members)
 			VALUES (SELECT id FROM heist WHERE name = #{name}, #{hs.skill.id}, #{hs.level}, #{hs.members});
-       </foreach>
+       	</foreach>
+		<choose>
+			<when test="heistMembers != null">
+				<foreach collection="heistMembers" item="hm" index="index">
+					INSERT INTO heistMembers (id_heist, id_member)
+					VALUES (SELECT id FROM heist WHERE name = #{name}, #{hm.id});
+				</foreach>
+			</when>
+		</choose>
 	</insert>
 	
 	<update id="updateHeist" parameterType="Heist">
 		UPDATE heist
 		SET name = #{name}, location = #{location}, start_time = #{startTime, jdbcType=DATE}, end_time = #{endTime, jdbcType=DATE}, status = #{heistStatus}
 		WHERE id = #{id};
+		
 		<foreach collection="heistSkills" item="hs" index="index">
 			DELETE FROM heist_skills
 			WHERE id_skill = #{hs.skill.id}
 			AND id_heist = #{id}
 			AND level = #{hs.level};
 		</foreach>
-			
 		<foreach collection="heistSkills" item="hs" index="index">
 			INSERT INTO heist_skills (id_heist, id_skill, level, members)
 			VALUES (#{id}, #{hs.skill.id}, #{hs.level}, #{hs.members});
 		</foreach>
+		
+		<choose>
+			<when test="heistMembers != null">
+				<foreach collection="heistMembers" item="hm" index="index">
+					DELETE FROM heist_members
+					WHERE id_heist = #{id};
+				</foreach>
+				<foreach collection="heistMembers" item="hm" index="index">
+					INSERT INTO heist_members (id_heist, id_member)
+					VALUES (#{id}, #{hm.id});
+				</foreach>
+			</when>
+		</choose>
 		
 		DELETE FROM heist_skills
 		WHERE id_heist = #{id}
@@ -79,5 +101,13 @@
 			#{hs.skill.id}
 		</foreach>
 	</update>
+	
+	<select id="findHeistMembers" resultType="Member" resultMap="ag04.hackathon2020.moneyheist.mapper.MemberMapper.memberMap">
+		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		FROM heist_members hm
+		LEFT JOIN member m ON hm.id_member = m.id
+		LEFT JOIN skill sk ON m.id_main_skill = sk.id
+		WHERE hm.id_heist = #{id};
+	</select>
 	
 </mapper>

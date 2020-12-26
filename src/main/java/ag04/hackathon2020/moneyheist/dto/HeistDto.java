@@ -93,6 +93,7 @@ public class HeistDto {
 		heist.setStartTime(dto.getStartTime());
 		heist.setEndTime(dto.getEndTime());
 		heist.setHeistSkills(dto.getHeistSkillDtos().stream().map(hsd -> HeistSkillDto.toEntity(hsd)).collect(Collectors.toList()));
+		heist.setHeistStatus(dto.getHeistStatus());
 		return heist;
 	}
 
@@ -103,6 +104,7 @@ public class HeistDto {
 		dto.setStartTime(entity.getStartTime());
 		dto.setEndTime(entity.getEndTime());
 		dto.setHeistSkillDtos(entity.getHeistSkills().stream().map(hs -> HeistSkillDto.toDto(hs)).collect(Collectors.toList()));
+		dto.setHeistStatus(entity.getHeistStatus());
 		return dto;
 	}
 	

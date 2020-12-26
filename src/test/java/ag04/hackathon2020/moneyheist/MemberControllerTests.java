@@ -29,7 +29,6 @@ public class MemberControllerTests {
 
 	@Test
 	public void createMember_addValidMemberObject_shouldReturnCreatedStatusWithLocationHeader() throws Exception {
-		Long id = null;
 		String email = "bruno@ag04.com";
 		String name = "Bruno";
 		Sex sex = Sex.M;
@@ -42,7 +41,7 @@ public class MemberControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(id, email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -53,7 +52,6 @@ public class MemberControllerTests {
 	
 	@Test
 	public void createMember_addMemberWithInvalidMainSkill_shouldReturnBadRequest() throws Exception {
-		Long id = null;
 		String email = "bruno@ag04.com";
 		String name = "Bruno";
 		Sex sex = Sex.M;
@@ -66,7 +64,7 @@ public class MemberControllerTests {
 		
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(id, email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -77,7 +75,6 @@ public class MemberControllerTests {
 	
 	@Test
 	public void createMember_addExistingMember_shouldReturnBadRequest() throws Exception {
-		Long id = null;
 		String email = "helsinki@ag04.com";
 		String name = "Helsinki";
 		Sex sex = Sex.M;
@@ -90,7 +87,7 @@ public class MemberControllerTests {
 		
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(id, email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -101,7 +98,6 @@ public class MemberControllerTests {
 
 	@Test
 	public void createMember_addMemberWithDuplicateSkills_shouldReturnBadRequest() throws Exception {
-		Long id = null;
 		String email = "bruno@ag04.com";
 		String name = "Bruno";
 		Sex sex = Sex.M;
@@ -114,7 +110,7 @@ public class MemberControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(id, email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
 		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
 
@@ -124,7 +120,7 @@ public class MemberControllerTests {
 	}
 
 	@Test
-	public void updateMember_updateMemberWithValidData_shouldReturnNoContentStatusWithContentLocationHeader() throws Exception {
+	public void updateMemberSkills_updateMemberWithValidData_shouldReturnNoContentStatusWithContentLocationHeader() throws Exception {
 		String mainSkill = "lock-breaking";
 		List<MemberSkillDto> memberSkillDtos = List.of(
 				new MemberSkillDto("combat", "***"),
@@ -143,7 +139,7 @@ public class MemberControllerTests {
 	}
 
 	@Test
-	public void updateMember_updateNonExistingMember_shouldReturnNotFound() throws Exception {
+	public void updateMemberSkills_updateNonExistingMember_shouldReturnNotFound() throws Exception {
 		String mainSkill = "lock-breaking";
 		List<MemberSkillDto> memberSkillDtos = List.of(
 				new MemberSkillDto("combat", "***"),
@@ -163,7 +159,7 @@ public class MemberControllerTests {
 	}
 	
 	@Test
-	public void updateMember_updateMemberWithInvalidMainSkill_shouldReturnBadRequest() throws Exception {
+	public void updateMemberSkills_updateMemberWithInvalidMainSkill_shouldReturnBadRequest() throws Exception {
 		String mainSkill = "invalid";
 		List<MemberSkillDto> memberSkillDtos = List.of(
 				new MemberSkillDto("combat", "***"),
@@ -183,7 +179,7 @@ public class MemberControllerTests {
 	}
 	
 	@Test
-	public void updateMember_updateMemberDuplicateSkillNames_shouldReturnBadRequest() throws Exception {
+	public void updateMemberSkills_updateMemberDuplicateSkillNames_shouldReturnBadRequest() throws Exception {
 		String mainSkill = "combat";
 		List<MemberSkillDto> memberSkillDtos = List.of(
 				new MemberSkillDto("combat", "***"),
