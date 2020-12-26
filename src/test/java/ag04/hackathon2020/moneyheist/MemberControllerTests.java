@@ -33,8 +33,8 @@ public class MemberControllerTests {
 		String name = "Bruno";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
-			new MemberSkillDto("combat", "********"),
-			new MemberSkillDto("running", "******")
+			new MemberSkillDto("combat", "********", 0),
+			new MemberSkillDto("running", "******", 0)
 		);
 		String mainSkill = "combat";
 		String status = "AVAILABLE";
@@ -56,8 +56,8 @@ public class MemberControllerTests {
 		String name = "Bruno";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
-			new MemberSkillDto("combat", "********"),
-			new MemberSkillDto("running", "******")
+			new MemberSkillDto("combat", "********", 0),
+			new MemberSkillDto("running", "******", 0)
 		);
 		String mainSkill = "combat_invalid";
 		String status = "AVAILABLE";
@@ -79,8 +79,8 @@ public class MemberControllerTests {
 		String name = "Helsinki";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
-			new MemberSkillDto("combat", "********"),
-			new MemberSkillDto("running", "******")
+			new MemberSkillDto("combat", "********", 0),
+			new MemberSkillDto("running", "******", 0)
 		);
 		String mainSkill = "combat";
 		String status = "AVAILABLE";
@@ -102,8 +102,8 @@ public class MemberControllerTests {
 		String name = "Bruno";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
-			new MemberSkillDto("combat", "********"),
-			new MemberSkillDto("combat", "******")
+			new MemberSkillDto("combat", "********", 0),
+			new MemberSkillDto("combat", "******", 0)
 		);
 		String mainSkill = "combat";
 		String status = "AVAILABLE";
@@ -123,9 +123,9 @@ public class MemberControllerTests {
 	public void updateMemberSkills_updateMemberWithValidData_shouldReturnNoContentStatusWithContentLocationHeader() throws Exception {
 		String mainSkill = "lock-breaking";
 		List<MemberSkillDto> memberSkillDtos = List.of(
-				new MemberSkillDto("combat", "***"),
-				new MemberSkillDto("money-laundering", "*"),
-				new MemberSkillDto("lock-breaking", "****")
+				new MemberSkillDto("combat", "***", 0),
+				new MemberSkillDto("money-laundering", "*", 0),
+				new MemberSkillDto("lock-breaking", "****", 0)
 		);
 		
 		RequestMethod method = RequestMethod.PUT;
@@ -142,9 +142,9 @@ public class MemberControllerTests {
 	public void updateMemberSkills_updateNonExistingMember_shouldReturnNotFound() throws Exception {
 		String mainSkill = "lock-breaking";
 		List<MemberSkillDto> memberSkillDtos = List.of(
-				new MemberSkillDto("combat", "***"),
-				new MemberSkillDto("money-laundering", "*"),
-				new MemberSkillDto("lock-breaking", "****")
+				new MemberSkillDto("combat", "***", 0),
+				new MemberSkillDto("money-laundering", "*", 0),
+				new MemberSkillDto("lock-breaking", "****", 0)
 		);
 
 		RequestMethod method = RequestMethod.PUT;
@@ -162,9 +162,9 @@ public class MemberControllerTests {
 	public void updateMemberSkills_updateMemberWithInvalidMainSkill_shouldReturnBadRequest() throws Exception {
 		String mainSkill = "invalid";
 		List<MemberSkillDto> memberSkillDtos = List.of(
-				new MemberSkillDto("combat", "***"),
-				new MemberSkillDto("money-laundering", "*"),
-				new MemberSkillDto("lock-breaking", "****")
+				new MemberSkillDto("combat", "***", 0),
+				new MemberSkillDto("money-laundering", "*", 0),
+				new MemberSkillDto("lock-breaking", "****", 0)
 		);
 		
 		RequestMethod method = RequestMethod.PUT;
@@ -182,9 +182,9 @@ public class MemberControllerTests {
 	public void updateMemberSkills_updateMemberDuplicateSkillNames_shouldReturnBadRequest() throws Exception {
 		String mainSkill = "combat";
 		List<MemberSkillDto> memberSkillDtos = List.of(
-				new MemberSkillDto("combat", "***"),
-				new MemberSkillDto("combat", "*"),
-				new MemberSkillDto("lock-breaking", "****")
+				new MemberSkillDto("combat", "***", 0),
+				new MemberSkillDto("combat", "*", 0),
+				new MemberSkillDto("lock-breaking", "****", 0)
 		);
 		
 		RequestMethod method = RequestMethod.PUT;
