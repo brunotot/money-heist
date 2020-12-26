@@ -21,6 +21,7 @@ import ag04.hackathon2020.moneyheist.dto.HeistSkillArrayDto;
 import ag04.hackathon2020.moneyheist.dto.HeistSkillDto;
 import ag04.hackathon2020.moneyheist.dto.MemberDto;
 import ag04.hackathon2020.moneyheist.entity.Heist;
+import ag04.hackathon2020.moneyheist.entity.HeistOutcome;
 import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.service.HeistService;
@@ -117,6 +118,15 @@ public class HeistController {
 		Heist heist = heistService.findById(heistId);
 		List<HeistSkillDto> heistSkillDtos = heist.getHeistSkills().stream().map(hs -> HeistSkillDto.toDto(hs)).collect(Collectors.toList());
 		return ResponseEntity.ok(heistSkillDtos);
+	}
+	
+	@GetMapping(path = "/{heistId}/outcome", produces = "application/json")
+	public ResponseEntity<String> getHeistOutcome(@PathVariable Long heistId) {
+		Heist heist = heistService.findById(heistId);
+		heistValidator.validateIfProperHeistStatus(heist, List.of(HeistStatus.FINISHED));
+		HeistOutcome outcome = heist.getHeistOutcome();
+		String jsonResponse = "{\"outcome\": \"" + outcome + "\"}";
+		return ResponseEntity.ok(jsonResponse);
 	}
 	
 }

@@ -107,4 +107,8 @@ public class HeistService {
 		heistMapper.save(heist);
 	}
 
+	public Heist save(Heist heist) {
+		return heistMapper.save(heist);
+	}
+
 }

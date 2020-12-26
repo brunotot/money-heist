@@ -23,13 +23,15 @@ public class Heist {
 
 	private HeistStatus heistStatus;
 	
+	private HeistOutcome heistOutcome;
+	
 	List<Member> heistMembers;
 	
 	public Heist() {
 		super();
 	}
 
-	public Heist(Long id, String name, String location, ZonedDateTime startTime, ZonedDateTime endTime, List<HeistSkill> heistSkills, HeistStatus heistStatus, List<Member> heistMembers) {
+	public Heist(Long id, String name, String location, ZonedDateTime startTime, ZonedDateTime endTime, List<HeistSkill> heistSkills, HeistStatus heistStatus, List<Member> heistMembers, HeistOutcome heistOutcome) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -39,6 +41,7 @@ public class Heist {
 		this.heistSkills = heistSkills;
 		this.heistStatus = heistStatus;
 		this.heistMembers = heistMembers;
+		this.heistOutcome = heistOutcome;
 	}
 
 	public Long getId() {
@@ -79,6 +82,10 @@ public class Heist {
 	public List<Member> getHeistMembers() {
 		return this.heistMembers;
 	}
+	
+	public HeistOutcome getHeistOutcome() {
+		return this.heistOutcome;
+	}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -106,6 +113,10 @@ public class Heist {
 
 	public void setHeistSkills(List<HeistSkill> heistSkills) {
 		this.heistSkills = heistSkills;
+	}
+	
+	public void setHeistOutcome(HeistOutcome heistOutcome) {
+		this.heistOutcome = heistOutcome;
 	}
 
 	public void setHeistSkills(HeistSkillArrayDto heistSkillArrayDto) {

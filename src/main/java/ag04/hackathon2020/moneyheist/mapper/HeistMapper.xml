@@ -67,7 +67,7 @@
 	
 	<update id="updateHeist" parameterType="Heist">
 		UPDATE heist
-		SET name = #{name}, location = #{location}, start_time = #{startTime, jdbcType=TIMESTAMP}, end_time = #{endTime, jdbcType=TIMESTAMP}, status = #{heistStatus}
+		SET name = #{name}, location = #{location}, start_time = #{startTime, jdbcType=TIMESTAMP}, end_time = #{endTime, jdbcType=TIMESTAMP}, status = #{heistStatus}, outcome = #{heistOutcome}
 		WHERE id = #{id};
 		
 		<foreach collection="heistSkills" item="hs" index="index">

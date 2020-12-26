@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ag04.hackathon2020.moneyheist.entity.Heist;
+import ag04.hackathon2020.moneyheist.entity.HeistOutcome;
 import ag04.hackathon2020.moneyheist.entity.HeistStatus;
 
 public class HeistDto {
@@ -22,11 +23,13 @@ public class HeistDto {
 	
 	private HeistStatus heistStatus;
 	
+	private HeistOutcome heistOutcome;
+	
 	public HeistDto() {
 		super();
 	}
 
-	public HeistDto(String name, String location, String startTime, String endTime, List<HeistSkillDto> heistSkillDtos, HeistStatus heistStatus) {
+	public HeistDto(String name, String location, String startTime, String endTime, List<HeistSkillDto> heistSkillDtos, HeistStatus heistStatus, HeistOutcome heistOutcome) {
 		super();
 		this.name = name;
 		this.location = location;
@@ -34,6 +37,7 @@ public class HeistDto {
 		this.endTime = endTime;
 		this.heistSkillDtos = heistSkillDtos;
 		this.heistStatus = heistStatus;
+		this.heistOutcome = heistOutcome;
 	}
 
 	@JsonProperty("skills")
@@ -62,6 +66,10 @@ public class HeistDto {
 	public HeistStatus getHeistStatus() {
 		return this.heistStatus;
 	}
+	
+	public HeistOutcome getHeistOutcome() {
+		return this.heistOutcome;
+	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -86,6 +94,10 @@ public class HeistDto {
 	public void setHeistStatus(HeistStatus heistStatus) {
 		this.heistStatus = heistStatus;
 	}
+	
+	public void setHeistOutcome(HeistOutcome heistOutcome) {
+		this.heistOutcome = heistOutcome;
+	}
 
 	public static Heist toEntity(HeistDto dto) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -108,6 +120,7 @@ public class HeistDto {
 		dto.setEndTime(entity.getEndTime().format(formatter));
 		dto.setHeistSkillDtos(entity.getHeistSkills().stream().map(hs -> HeistSkillDto.toDto(hs)).collect(Collectors.toList()));
 		dto.setHeistStatus(entity.getHeistStatus() == null ? HeistStatus.PLANNING : entity.getHeistStatus());
+		dto.setHeistOutcome(entity.getHeistOutcome() == null ? null : entity.getHeistOutcome());
 		return dto;
 	}
 	
