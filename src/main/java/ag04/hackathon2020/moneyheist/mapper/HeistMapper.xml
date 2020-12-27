@@ -114,8 +114,9 @@
 	</update>
 	
 	<select id="findHeistMembers" resultType="Member" resultMap="ag04.hackathon2020.moneyheist.mapper.MemberMapper.memberMap">
-		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		SELECT m.id, m.sex, m.name, m.email, m.status, sk.id AS skillId, sk.name AS skillName, r.id AS roleId, r.value AS roleValue
 		FROM heist_members hm
+		INNER JOIN role r ON m.id_role = r.id
 		LEFT JOIN member m ON hm.id_member = m.id
 		LEFT JOIN skill sk ON m.id_main_skill = sk.id
 		WHERE hm.id_heist = #{id};

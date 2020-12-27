@@ -6,14 +6,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ag04.hackathon2020.moneyheist.dto.HeistDto;
@@ -31,6 +34,18 @@ public class HeistControllerTests {
 	private RequestHelper requestHelper;
 
 	private int creationId = 4;
+
+	private HttpHeaders organiserAuthHeaders;
+	
+	private HttpHeaders memberAuthHeaders;
+	
+	@Before
+	public void setup() {
+		this.organiserAuthHeaders = new HttpHeaders();
+		this.organiserAuthHeaders.add("Authorization", "Basic " + Base64Utils.encodeToString("Helsinki:ag04heist".getBytes()));
+		this.memberAuthHeaders = new HttpHeaders();
+		this.memberAuthHeaders.add("Authorization", "Basic " + Base64Utils.encodeToString("Bruno:ag04heist".getBytes()));
+	}
 	
 	@Test
 	public void createHeist_addValidHeistObject_shouldReturnCreatedStatusWithLocationHeader() throws Exception {
@@ -48,7 +63,7 @@ public class HeistControllerTests {
 		String path = "/heist";
 		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		creationId++;
 		String locationExpected = "/heist/" + creationId;
@@ -72,7 +87,7 @@ public class HeistControllerTests {
 		String path = "/heist";
 		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist already exists";
@@ -95,7 +110,7 @@ public class HeistControllerTests {
 		String path = "/heist";
 		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Duplicate heist skills";
@@ -118,7 +133,7 @@ public class HeistControllerTests {
 		String path = "/heist";
 		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Invalid dates";
@@ -136,7 +151,7 @@ public class HeistControllerTests {
 		String path = "/heist/1/skills";
 		Object body = new HeistSkillArrayDto(heistSkillDtos);
 		HttpStatus expectedResponseStatus = HttpStatus.NO_CONTENT;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	
 		String locationExpected = "/heist/1/skills";
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Content-Location");
@@ -154,7 +169,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/skills";
 		Object body = new HeistSkillArrayDto(heistSkillDtos);
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist not found";
@@ -173,7 +188,7 @@ public class HeistControllerTests {
 		String path = "/heist/1/skills";
 		Object body = new HeistSkillArrayDto(heistSkillDtos);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Duplicate heist skills";
@@ -186,7 +201,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/eligible_members";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist not found";
@@ -199,7 +214,7 @@ public class HeistControllerTests {
 		String path = "/heist/2/members";
 		Object body = Collections.singletonMap("members", List.of("Helsinki"));
 		HttpStatus expectedResponseStatus = HttpStatus.NO_CONTENT;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);	
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);	
 		
 		String locationExpected = path;
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Content-Location");
@@ -212,7 +227,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/members";
 		Object body = Collections.singletonMap("members", List.of("Helsinki"));
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);	
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);	
 		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist not found";
@@ -223,9 +238,9 @@ public class HeistControllerTests {
 	public void confirmHeistMembers_confirmInvalidMembers_shouldReturnNotFound() throws Exception {
 		RequestMethod method = RequestMethod.PUT;
 		String path = "/heist/2/members";
-		Object body = Collections.singletonMap("members", List.of("Bruno"));
+		Object body = Collections.singletonMap("members", List.of("BrunoInvalid"));
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Member not found";
@@ -238,8 +253,8 @@ public class HeistControllerTests {
 		String path = "/heist/1/members";	
 		Object body = Collections.singletonMap("members", List.of("Helsinki"));
 		HttpStatus expectedResponseStatus = HttpStatus.METHOD_NOT_ALLOWED;
-		requestHelper.sendRequest(method, path, body, HttpStatus.NO_CONTENT);
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, HttpStatus.NO_CONTENT, organiserAuthHeaders);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 			
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist status is not PLANNING";
@@ -252,7 +267,7 @@ public class HeistControllerTests {
 		String path = "/heist/3/start";
 		Object body = Collections.singletonMap("members", List.of("Helsinki"));
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String locationExpected = "/heist/3/status";
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
@@ -265,7 +280,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/start";
 		Object body = Collections.singletonMap("members", List.of("Helsinki"));
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 		
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist not found";
@@ -278,7 +293,7 @@ public class HeistControllerTests {
 		String path = "/heist/1/start";	
 		Object body = Collections.singletonMap("members", List.of("Helsinki"));
 		HttpStatus expectedResponseStatus = HttpStatus.METHOD_NOT_ALLOWED;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Heist status is not READY";
@@ -291,7 +306,7 @@ public class HeistControllerTests {
 		String path = "/heist/1";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 
 	@Test
@@ -300,7 +315,7 @@ public class HeistControllerTests {
 		String path = "/heist/99";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -309,7 +324,7 @@ public class HeistControllerTests {
 		String path = "/heist/3/members";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -318,7 +333,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/members";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -327,7 +342,7 @@ public class HeistControllerTests {
 		String path = "/heist/1/members";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.METHOD_NOT_ALLOWED;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -336,7 +351,7 @@ public class HeistControllerTests {
 		String path = "/heist/1/skills";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -345,7 +360,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/skills";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -354,7 +369,7 @@ public class HeistControllerTests {
 		String path = "/heist/1/status";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -363,7 +378,7 @@ public class HeistControllerTests {
 		String path = "/heist/99/status";	
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -386,18 +401,18 @@ public class HeistControllerTests {
 		String path = "/heist";
 		Object body = new HeistDto(name, location, startTime, endTime, heistSkillDtos, heistStatus, null);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 		
 		Object membersToConfirm = Collections.singletonMap("members", List.of("Helsinki"));
-		requestHelper.sendRequest(RequestMethod.PUT, "/heist/" + creationId + "/members", membersToConfirm, HttpStatus.NO_CONTENT);
+		requestHelper.sendRequest(RequestMethod.PUT, "/heist/" + creationId + "/members", membersToConfirm, HttpStatus.NO_CONTENT, organiserAuthHeaders);
 		creationId++;
 
 		Thread.sleep(delay * 1000);
-		MvcResult mvcResult = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
+		MvcResult mvcResult = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK, organiserAuthHeaders);
 		String responseInProgress = mvcResult.getResponse().getContentAsString();
 		
 		Thread.sleep((delay + delayForMails) * 1000);
-		MvcResult mvcResultFinished = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK);
+		MvcResult mvcResultFinished = requestHelper.sendRequest(RequestMethod.GET, "/heist/" + (creationId - 1) + "/status", null, HttpStatus.OK, organiserAuthHeaders);
 		String responseFinished = mvcResultFinished.getResponse().getContentAsString();
 
 		Assert.assertTrue(responseInProgress.contains("IN_PROGRESS"));

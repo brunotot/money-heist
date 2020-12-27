@@ -22,12 +22,18 @@ public class Member {
 	
 	private MemberStatus status;
 
+	private String password;
+	
+	private Integer active;
+	
+	private Role role;
+	
 	public Member() {
 		super();
 	}
-
+	
 	public Member(Long id, String email, String name, Sex sex, List<MemberSkill> memberSkills, Skill mainSkill,
-			MemberStatus status) {
+			MemberStatus status, String password, Integer active, Role role) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -36,6 +42,9 @@ public class Member {
 		this.memberSkills = memberSkills;
 		this.mainSkill = mainSkill;
 		this.status = status;
+		this.password = password;
+		this.active = active;
+		this.role = role;
 	}
 
 	public Long getId() {
@@ -65,13 +74,17 @@ public class Member {
 	public MemberStatus getStatus() {
 		return status;
 	}
-	
-	public List<Skill> getSkills() {
-		return memberSkills.stream()
-				.filter(ms -> ms != null)
-				.map(ms -> ms.getSkill())
-				.collect(Collectors.toList());
 
+	public String getPassword() {
+		return password;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public Role getRole() {
+		return role;
 	}
 
 	public void setId(Long id) {
@@ -93,6 +106,34 @@ public class Member {
 	public void setMemberSkills(List<MemberSkill> memberSkills) {
 		this.memberSkills = memberSkills;
 	}
+
+	public void setMainSkill(Skill mainSkill) {
+		this.mainSkill = mainSkill;
+	}
+
+	public void setStatus(MemberStatus status) {
+		this.status = status;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public List<Skill> getSkills() {
+		return memberSkills.stream()
+				.filter(ms -> ms != null)
+				.map(ms -> ms.getSkill())
+				.collect(Collectors.toList());
+
+	}
 	
 	public void setMemberSkills(MemberSkillArrayDto skillArrayDto) {
 		List<MemberSkillDto> memberSkillDtos = skillArrayDto.getMemberSkillDtos();
@@ -112,14 +153,6 @@ public class Member {
 				this.setMainSkill(mainSkill);
 			}
 		}
-	}
-
-	public void setMainSkill(Skill mainSkill) {
-		this.mainSkill = mainSkill;
-	}
-
-	public void setStatus(MemberStatus status) {
-		this.status = status;
 	}
 
 }

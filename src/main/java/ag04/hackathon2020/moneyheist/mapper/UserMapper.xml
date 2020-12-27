@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="ag04.hackathon2020.moneyheist.mapper.UserMapper">
+	
+	<resultMap type="User" id="userMap">
+		<id property="id" column="id"/>
+		<result property="active" column="u.active"/>
+		<result property="email" column="email"/>
+		<result property="name" column="name"/>
+		<result property="password" column="password"/>
+		<association property="role" javaType="Role">
+	        <result property="id" column="roleId"/>
+	        <result property="value" column="roleValue"/>
+        </association>
+		<discriminator javaType="integer" column="roleId">
+            <case value="2" resultMap="ag04.hackathon2020.moneyheist.mapper.MemberMapper.memberMap"/>
+        </discriminator>
+	</resultMap>
+
+	<select id="findUserByName" resultType="User" resultMap="userMap">
+		SELECT m.sex AS sex, m.status, sk.id AS skillId, sk.name AS skillName, u.id, u.active, u.email, u.name, u.password, r.id AS roleId, r.value AS roleValue
+		FROM user u
+		INNER JOIN role r ON u.id_role = r.id
+		LEFT JOIN member m ON u.id = m.id
+		LEFT JOIN skill sk ON m.id_main_skill = sk.id
+		WHERE u.name = #{name};
+	</select>
+	
+</mapper>

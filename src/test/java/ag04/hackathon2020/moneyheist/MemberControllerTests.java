@@ -3,14 +3,17 @@ package ag04.hackathon2020.moneyheist;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ag04.hackathon2020.moneyheist.dto.MemberDto;
@@ -27,10 +30,25 @@ public class MemberControllerTests {
 	@Autowired
 	private RequestHelper requestHelper;
 
+	private HttpHeaders organiserAuthHeaders;
+	
+	private HttpHeaders memberAuthHeaders;
+	
+	@Before
+	public void setup() {
+		this.organiserAuthHeaders = new HttpHeaders();
+		this.organiserAuthHeaders.add("Authorization", "Basic " + Base64Utils.encodeToString("Helsinki:ag04heist".getBytes()));
+		this.memberAuthHeaders = new HttpHeaders();
+		this.memberAuthHeaders.add("Authorization", "Basic " + Base64Utils.encodeToString("Bruno:ag04heist".getBytes()));
+	}
+	
 	@Test
 	public void createMember_addValidMemberObject_shouldReturnCreatedStatusWithLocationHeader() throws Exception {
-		String email = "bruno@ag04.com";
-		String name = "Bruno";
+		String password = "ag04heist";
+		Integer active = 1;
+		String role = "MEMBER";
+		String email = "bruno2@ag04.com";
+		String name = "Bruno2";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
 			new MemberSkillDto("combat", "********", 0),
@@ -41,19 +59,22 @@ public class MemberControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status, role, active, password);
 		HttpStatus expectedResponseStatus = HttpStatus.CREATED;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
-		String locationExpected = "/member/2";
+		String locationExpected = "/member/3";
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Location");
 		Assert.assertEquals(locationExpected, locationActual);
 	}
 	
 	@Test
 	public void createMember_addMemberWithInvalidMainSkill_shouldReturnBadRequest() throws Exception {
-		String email = "bruno@ag04.com";
-		String name = "Bruno";
+		String password = "ag04heist";
+		Integer active = 1;
+		String role = "MEMBER";
+		String email = "bruno2@ag04.com";
+		String name = "Bruno2";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
 			new MemberSkillDto("combat", "********", 0),
@@ -64,9 +85,9 @@ public class MemberControllerTests {
 		
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status, role, active, password);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "mainSkill doesn't reference any skill from skills array";
@@ -75,6 +96,9 @@ public class MemberControllerTests {
 	
 	@Test
 	public void createMember_addExistingMember_shouldReturnBadRequest() throws Exception {
+		String password = "ag04heist";
+		Integer active = 1;
+		String role = "ORGANISER";
 		String email = "helsinki@ag04.com";
 		String name = "Helsinki";
 		Sex sex = Sex.M;
@@ -87,9 +111,9 @@ public class MemberControllerTests {
 		
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status, role, active, password);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Member already exists";
@@ -98,8 +122,11 @@ public class MemberControllerTests {
 
 	@Test
 	public void createMember_addMemberWithDuplicateSkills_shouldReturnBadRequest() throws Exception {
-		String email = "bruno@ag04.com";
-		String name = "Bruno";
+		String password = "ag04heist";
+		Integer active = 1;
+		String role = "MEMBER";
+		String email = "bruno2@ag04.com";
+		String name = "Bruno2";
 		Sex sex = Sex.M;
 		List<MemberSkillDto> memberSkillDtos = List.of(
 			new MemberSkillDto("combat", "********", 0),
@@ -110,9 +137,9 @@ public class MemberControllerTests {
 
 		RequestMethod method = RequestMethod.POST;
 		String path = "/member";
-		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status);
+		Object body = new MemberDto(email, name, sex, memberSkillDtos, mainSkill, status, role, active, password);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Duplicate member skill names";
@@ -132,7 +159,7 @@ public class MemberControllerTests {
 		String path = "/member/1/skills";
 		Object body = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		HttpStatus expectedResponseStatus = HttpStatus.NO_CONTENT;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String locationActual = (String) mvcResult.getResponse().getHeaderValue("Content-Location");
 		Assert.assertEquals(path, locationActual);
@@ -151,7 +178,7 @@ public class MemberControllerTests {
 		String path = "/member/999/skills";
 		Object body = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Member not found";
@@ -171,7 +198,7 @@ public class MemberControllerTests {
 		String path = "/member/1/skills";
 		Object body = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "mainSkill doesn't reference any skill from skills array";
@@ -191,7 +218,7 @@ public class MemberControllerTests {
 		String path = "/member/1/skills";
 		Object body = new MemberSkillArrayDto(memberSkillDtos, mainSkill);
 		HttpStatus expectedResponseStatus = HttpStatus.BAD_REQUEST;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Duplicate member skill names";
@@ -204,7 +231,7 @@ public class MemberControllerTests {
 		String path = "/member/1/skills/combat";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NO_CONTENT;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -213,7 +240,7 @@ public class MemberControllerTests {
 		String path = "/member/99/skills/combat";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Member not found";
@@ -226,7 +253,7 @@ public class MemberControllerTests {
 		String path = "/member/1/skills/invalid";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		MvcResult mvcResult = requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 
 		String response = mvcResult.getResponse().getContentAsString();
 		String problemTitleExpected = "Member doesn't have the skill";
@@ -239,7 +266,7 @@ public class MemberControllerTests {
 		String path = "/member/1";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -248,7 +275,7 @@ public class MemberControllerTests {
 		String path = "/member/99";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -257,7 +284,7 @@ public class MemberControllerTests {
 		String path = "/member/1/skills";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.OK;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 	
 	@Test
@@ -266,7 +293,7 @@ public class MemberControllerTests {
 		String path = "/member/99/skills";
 		Object body = null;
 		HttpStatus expectedResponseStatus = HttpStatus.NOT_FOUND;
-		requestHelper.sendRequest(method, path, body, expectedResponseStatus);
+		requestHelper.sendRequest(method, path, body, expectedResponseStatus, organiserAuthHeaders);
 	}
 
 }

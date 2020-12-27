@@ -77,6 +77,7 @@ public class HeistController {
 	@PutMapping("/{heistId}/members")
 	public ResponseEntity<Void> confirmHeistMembers(@PathVariable Long heistId, @RequestBody Map<String, Object> json) {
 		Heist heist = heistService.findById(heistId);
+		
 		@SuppressWarnings("unchecked")
 		List<String> memberNames = (List<String>) json.get("members");
 		List<Member> members = memberService.findByNames(memberNames);

@@ -3,10 +3,13 @@ package ag04.hackathon2020.moneyheist.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ag04.hackathon2020.moneyheist.entity.Member;
 import ag04.hackathon2020.moneyheist.entity.MemberStatus;
+import ag04.hackathon2020.moneyheist.entity.Role;
 import ag04.hackathon2020.moneyheist.entity.Sex;
 import ag04.hackathon2020.moneyheist.entity.Skill;
 
@@ -24,13 +27,19 @@ public class MemberDto {
 	private String mainSkill;
 	
 	private String status;
+	
+	private String role;
+	
+	private Integer active;
+	
+	private String password;
 
 	public MemberDto() {
 		super();
 	}
 
 	public MemberDto(String email, String name, Sex sex, List<MemberSkillDto> memberSkillDtos, String mainSkill,
-			String status) {
+			String status, String role, Integer active, String password) {
 		super();
 		this.email = email;
 		this.name = name;
@@ -38,8 +47,11 @@ public class MemberDto {
 		this.memberSkillDtos = memberSkillDtos;
 		this.mainSkill = mainSkill;
 		this.status = status;
+		this.role = role;
+		this.active = active;
+		this.password = password;
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}
@@ -62,6 +74,18 @@ public class MemberDto {
 
 	public String getStatus() {
 		return status;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 	public void setEmail(String email) {
@@ -88,6 +112,18 @@ public class MemberDto {
 		this.status = status;
 	}
 
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public static Member toEntity(MemberDto dto) {
 		Member entity = new Member();
 		entity.setEmail(dto.getEmail());
@@ -96,6 +132,11 @@ public class MemberDto {
 		entity.setStatus(dto.getStatus() == null ? null : MemberStatus.valueOf(dto.getStatus().toUpperCase()));
 		entity.setMainSkill(dto.getMainSkill() == null ? null : new Skill(null, dto.getMainSkill().toUpperCase()));
 		entity.setMemberSkills(dto.getMemberSkillDtos() == null ? null : dto.getMemberSkillDtos().stream().map(msd -> MemberSkillDto.toEntity(msd)).collect(Collectors.toList()));
+		entity.setActive(dto.getActive());
+		entity.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
+		String role = dto.getRole();
+		Long roleId = role.equals("ORGANISER") ? 1L : 2L;
+		entity.setRole(new Role(roleId, role));
 		return entity;
 	}
 	
@@ -107,6 +148,9 @@ public class MemberDto {
 		dto.setMainSkill(entity.getMainSkill() == null ? null : entity.getMainSkill().getName().toUpperCase());
 		dto.setStatus(entity.getStatus() == null ? null : entity.getStatus().toString().toUpperCase());
 		dto.setMemberSkillDtos(entity.getMemberSkills() == null ? null : entity.getMemberSkills().stream().map(ms -> MemberSkillDto.toDto(ms)).collect(Collectors.toList()));
+		dto.setActive(entity.getActive());
+		dto.setRole(entity.getRole().getValue());
+		dto.setPassword(entity.getPassword());
 		return dto;
 	}
 	

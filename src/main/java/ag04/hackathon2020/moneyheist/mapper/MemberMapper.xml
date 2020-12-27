@@ -19,7 +19,13 @@
 		<result property="sex" column="sex" />
 		<result property="email" column="email" />
 		<result property="name" column="name" />
-		<result property="status" column="statusValue" />
+		<result property="status" column="status" />
+		<result property="active" column="active" />
+		<result property="password" column="password" />
+        <association property="role" javaType="Role">
+	        <result property="id" column="roleId"/>
+	        <result property="value" column="roleValue"/>
+        </association>
         <association property="mainSkill" javaType="Skill">
 	        <result property="id" column="skilLId"/>
 	        <result property="name" column="skillName"/>
@@ -28,22 +34,25 @@
 	</resultMap>
 
 	<select id="findMemberById" resultType="Member" resultMap="memberMap">
-		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		SELECT m.*, sk.id AS skillId, sk.name AS skillName, r.id AS roleId, r.value AS roleValue
 		FROM member m
+		INNER JOIN role r ON m.id_role = r.id
 		LEFT JOIN skill sk ON m.id_main_skill = sk.id
 		WHERE m.id = #{id}
 	</select>
 
 	<select id="findMemberByEmail" resultType="Member" resultMap="memberMap">
-		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		SELECT m.*, sk.id AS skillId, sk.name AS skillName, r.id AS roleId, r.value AS roleValue
 		FROM member m
+		INNER JOIN role r ON m.id_role = r.id
 		LEFT JOIN skill sk ON m.id_main_skill = sk.id
-		WHERE email = #{email}
+		WHERE m.email = #{email}
 	</select>
 
 	<select id="findMemberByName" resultType="Member" resultMap="memberMap">
-		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		SELECT m.*, sk.id AS skillId, sk.name AS skillName, r.id AS roleId, r.value AS roleValue
 		FROM member m
+		INNER JOIN role r ON m.id_role = r.id
 		LEFT JOIN skill sk ON m.id_main_skill = sk.id
 		WHERE m.name = #{name}
 	</select>
@@ -59,8 +68,8 @@
 		<selectKey order="AFTER" keyProperty="id" resultType="long">
 	    	SELECT id FROM member WHERE email = #{email}
 	  	</selectKey>
-		INSERT INTO member (sex, name, email, status, id_main_skill)
-		VALUES (#{sex}, #{name}, #{email}, #{status}, #{mainSkill.id});
+		INSERT INTO member (id_role, password, active, sex, name, email, status, id_main_skill)
+		VALUES (#{role.id}, #{password}, #{active}, #{sex}, #{name}, #{email}, #{status}, #{mainSkill.id});
 		<foreach collection="memberSkills" item="ms" index="index">
 			INSERT INTO member_skills (id_member, id_skill, level)
 			VALUES (SELECT id FROM member WHERE email = #{email}, #{ms.skill.id}, #{ms.level});
@@ -69,7 +78,7 @@
 	
 	<update id="updateMember" parameterType="Member">
 		UPDATE member
-		SET sex = #{sex}, name = #{name}, email = #{email}, status = #{status}, id_main_skill = #{mainSkill.id}
+		SET id_role = #{role.id}, password = #{password}, active = #{active}, sex = #{sex}, name = #{name}, email = #{email}, status = #{status}, id_main_skill = #{mainSkill.id}
 		WHERE id = #{id};
 		<foreach collection="memberSkills" item="ms" index="index">
 			DELETE FROM member_skills
@@ -90,8 +99,9 @@
 	</update>
 	
 	<select id="findEligibleMembers" resultType="Member" parameterType="Heist" resultMap="memberMap">
-		SELECT m.id, m.sex, m.name, m.email, m.status AS statusValue, sk.id AS skillId, sk.name AS skillName
+		SELECT m.*, sk.id AS skillId, sk.name AS skillName, r.id AS roleId, r.value AS roleValue
 		FROM member m
+		INNER JOIN role r ON m.id_role = r.id
 		LEFT JOIN skill sk ON m.id_main_skill = sk.id
 		WHERE m.status IN ('AVAILABLE', 'RETIRED')
 		AND m.id IN (

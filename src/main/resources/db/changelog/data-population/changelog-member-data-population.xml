@@ -6,9 +6,23 @@
 			<column name="id" value="1"/>
 			<column name="sex" value="M"/>
 			<column name="name" value="Helsinki"/>
-			<column name="email" value="brunotot10000@gmail.com"/>
+			<column name="email" value="helsinki10000temp@gmail.com"/>
 			<column name="id_main_skill" value="1"/>
 			<column name="status" value="AVAILABLE"/>
+			<column name="active" value="1"/>
+			<column name="id_role" value="1"/>
+			<column name="password" value="$2a$10$6dELbwUSD4VRJZ7oHADlZuz48bKwAqlooccWzBn/dmc2MFwO87spW"/>
+		</insert>
+		<insert tableName="member">
+			<column name="id" value="2"/>
+			<column name="sex" value="M"/>
+			<column name="name" value="Bruno"/>
+			<column name="email" value="brunotot10000temp@gmail.com"/>
+			<column name="id_main_skill" value="1"/>
+			<column name="status" value="AVAILABLE"/>
+			<column name="active" value="1"/>
+			<column name="id_role" value="2"/>
+			<column name="password" value="$2a$10$6dELbwUSD4VRJZ7oHADlZuz48bKwAqlooccWzBn/dmc2MFwO87spW"/>
 		</insert>
 	</changeSet>
 	

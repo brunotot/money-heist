@@ -2,13 +2,13 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.10.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
 
 	<changeSet author="bruno.tot" id="1">
-		<insert tableName="skill">
+		<insert tableName="role">
 			<column name="id" value="1"/>
-			<column name="name" value="ATTACK"/>
+			<column name="value" value="ORGANISER"/>
 		</insert>
-		<insert tableName="skill">
+		<insert tableName="role">
 			<column name="id" value="2"/>
-			<column name="name" value="DEFENSE"/>
+			<column name="value" value="MEMBER"/>
 		</insert>
 	</changeSet>
 	
