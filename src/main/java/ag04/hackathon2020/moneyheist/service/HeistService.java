@@ -1,7 +1,5 @@
 package ag04.hackathon2020.moneyheist.service;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -46,18 +44,6 @@ public class HeistService {
 		this.threadPoolTaskScheduler = threadPoolTaskScheduler;
 		this.mailingService = mailingService;
 	}
-
-	public static Date getDate(int year, int month, int day, int hour, int minute, int second) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
-        cal.set(Calendar.DAY_OF_MONTH, day);
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, minute);
-        cal.set(Calendar.SECOND, second);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
 	
 	@Transactional
 	public Heist create(Heist heist) {
@@ -92,10 +78,12 @@ public class HeistService {
 	@Transactional
 	public Heist update(Heist heist) {
 		heistValidator.validateIfSkillsUniqueByNameAndLevel(heist);
+		heistValidator.validateIfProperHeistStatus(heist, List.of(HeistStatus.FINISHED, HeistStatus.PLANNING, HeistStatus.READY));
 		return saveHeistAndSkills(heist);
 	}
 
 	public List<Member> findEligibleMembers(Heist heist) {
+		heistValidator.validateIfMembersNotAlreadyConfirmed(heist);
 		return memberMapper.findEligibleMembers(heist);
 	}
 
@@ -111,7 +99,8 @@ public class HeistService {
 	public void startHeist(Heist heist) {
 		heistValidator.validateIfProperHeistStatus(heist, List.of(HeistStatus.READY));
 		heist.setHeistStatus(HeistStatus.IN_PROGRESS);
-		heistMapper.save(heist);
+		Heist newHeist = heistMapper.save(heist);
+		newHeist.getHeistMembers().forEach(m -> mailingService.sendMail(m.getEmail(), "Heist started", "Heist with ID: " + newHeist.getId() + " has started."));
 	}
 
 	public Heist save(Heist heist) {

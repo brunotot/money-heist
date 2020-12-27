@@ -87,7 +87,6 @@ public class EndHeistRunnableTask implements Runnable {
 					ZonedDateTime end = heist.getEndTime();
 					int currentExperience = wantedSkill.getExperience() + (int) ChronoUnit.SECONDS.between(start, end);
 					String currentSkillLevel = wantedSkill.getLevel();
-					levelUpTime = 20;
 					int levelUpgrade = (int) ((float) currentExperience / levelUpTime);
 					if (levelUpgrade != 0 && currentSkillLevel.length() < 10) {
 						while (levelUpgrade > 0 && currentSkillLevel.length() < 10) {

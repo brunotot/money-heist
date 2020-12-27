@@ -62,9 +62,9 @@ public class MemberValidator {
 		String mainSkillString = null;
 		if (mainSkill != null) {
 			mainSkillString = mainSkill.getName();
-		}
-		if (mainSkill != null && !mainSkillString.isEmpty() && Skill.find(mainSkillString, skills) == null) {
-			throw new ApiException(HttpStatus.BAD_REQUEST, "mainSkill doesn't reference any skill from skills array", "Invalid mainSkill was provided. Please, make sure to only provide mainSkill which references member's skills from skills array",  null);
+			if (mainSkillString != null && !mainSkillString.isEmpty() && Skill.find(mainSkillString, skills) == null) {
+				throw new ApiException(HttpStatus.BAD_REQUEST, "mainSkill doesn't reference any skill from skills array", "Invalid mainSkill was provided. Please, make sure to only provide mainSkill which references member's skills from skills array",  null);
+			}
 		}
 	}
 	

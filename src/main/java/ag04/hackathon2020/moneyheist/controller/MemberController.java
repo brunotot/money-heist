@@ -68,10 +68,7 @@ public class MemberController {
 		Member member = memberService.findById(memberId);
 		List<MemberSkillDto> memberSkillDtos = member.getMemberSkills().stream().map(ms -> MemberSkillDto.toDto(ms)).collect(Collectors.toList());
 		Skill mainSkill = member.getMainSkill();
-		String mainSkillString = null;
-		if (mainSkill != null) {
-			mainSkillString = mainSkill.getName();
-		}
+		String mainSkillString = mainSkill == null ? null : mainSkill.getName();
 		MemberSkillArrayDto memberSkillArrayDto = new MemberSkillArrayDto(memberSkillDtos, mainSkillString);
 		return ResponseEntity.ok(memberSkillArrayDto);
 	}

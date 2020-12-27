@@ -84,5 +84,12 @@ public class HeistValidator {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid members array", "Empty arrays are not allowed", null);
 		}
 	}
+
+	public void validateIfMembersNotAlreadyConfirmed(Heist heist) {
+		List<Member> members = heist.getHeistMembers();
+		if (members != null && !members.isEmpty()) {
+			throw new ApiException(HttpStatus.METHOD_NOT_ALLOWED, "Members are already confirmed", "Cannot view eligible members if the heist already has confirmed members", null);
+		}
+	}
 	
 }
