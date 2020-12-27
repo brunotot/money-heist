@@ -1,6 +1,5 @@
 package ag04.hackathon2020.moneyheist.util;
 
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +25,9 @@ public class RequestHelper {
 	}
 	
 	public MvcResult sendRequest(RequestMethod method, String path, Object body, HttpStatus expectedResponseStatus, HttpHeaders headers) throws Exception {
+		if (headers == null) {
+			headers = new HttpHeaders();
+		}
 		ResultMatcher resultMatcher = MockMvcResultMatchers.status().is(expectedResponseStatus.value());
 		String dto = mapper.writeValueAsString(body);
 		MvcResult mvcResult = null;
@@ -44,8 +46,8 @@ public class RequestHelper {
 				.andExpect(resultMatcher).andReturn();
 		} else if (method.equals(RequestMethod.PUT)) {
 			mvcResult = this.mvc.perform(
-					MockMvcRequestBuilders.put(path).headers(headers).contentType(contentType).content(dto))
-					.andExpect(resultMatcher).andReturn();
+				MockMvcRequestBuilders.put(path).headers(headers).contentType(contentType).content(dto))
+				.andExpect(resultMatcher).andReturn();
 		} else if (method.equals(RequestMethod.PATCH)) {
 			mvcResult = this.mvc.perform(
 				MockMvcRequestBuilders.patch(path).headers(headers).contentType(contentType).content(dto))
